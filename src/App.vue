@@ -27,17 +27,49 @@
       <router-view />
     </main>
 
-    <!-- Cronómetro Flotante -->
+    <!-- Cronómetro Flotante Draggable -->
     <div 
-      v-if="timerStore.isActive" 
-      class="fixed top-20 right-4 z-50 bg-gym-gray rounded-full p-3 border-2 border-gym-cyan shadow-lg shadow-gym-cyan/30"
+      v-if="timerStore.isActive || timerStore.currentTime > 0" 
+      ref="floatingTimer"
+      class="fixed z-50 bg-gym-gray rounded-2xl border-2 border-gym-cyan shadow-lg shadow-gym-cyan/30 cursor-move select-none min-w-[140px]"
+      :style="{ top: floatingPosition.y + 'px', left: floatingPosition.x + 'px' }"
+      @mousedown="startDrag"
+      @touchstart="startDrag"
     >
-      <div class="text-center">
-        <div class="text-xs text-gym-cyan font-semibold">
-          {{ timerStore.isResting ? 'DESCANSO' : 'ENTRENA' }}
+      <div class="p-4 text-center">
+        <div class="text-sm text-gym-cyan font-semibold mb-2">
+          {{ timerStore.isResting ? '😴 DESCANSO' : '💪 ENTRENA' }}
         </div>
-        <div class="text-lg font-bold text-white">
+        <div class="text-2xl font-bold text-white mb-3">
           {{ formatTime(timerStore.currentTime) }}
+        </div>
+        <!-- Controles -->
+        <div class="flex justify-center space-x-3">
+          <button
+            @click.stop.prevent="toggleFloatingTimer"
+            @touchstart.prevent="handleTouchStart"
+            @touchend.prevent="handleToggleTouch"
+            class="w-12 h-12 rounded-full bg-gym-cyan text-gym-dark flex items-center justify-center font-bold hover:scale-110 transition-transform active:scale-95 touch-manipulation"
+            type="button"
+          >
+            <svg v-if="timerStore.isActive" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 9v6m4-6v6"></path>
+            </svg>
+            <svg v-else class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"></path>
+            </svg>
+          </button>
+          <button
+            @click.stop.prevent="resetFloatingTimer"
+            @touchstart.prevent="handleTouchStart"
+            @touchend.prevent="handleResetTouch"
+            class="w-12 h-12 rounded-full bg-gym-orange text-gym-dark flex items-center justify-center font-bold hover:scale-110 transition-transform active:scale-95 touch-manipulation"
+            type="button"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -83,12 +115,23 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 
 export default {
   name: 'App',
   setup() {
     const selectedUser = ref(localStorage.getItem('selectedUser') || 'matias')
+    const floatingTimer = ref(null)
+    
+    // Posición del cronómetro flotante
+    const floatingPosition = reactive({
+      x: window.innerWidth - 120, // Posición inicial derecha
+      y: 80 // Posición inicial superior
+    })
+    
+    // Variables para el dragging
+    const isDragging = ref(false)
+    const dragOffset = reactive({ x: 0, y: 0 })
     
     // Store global del cronómetro
     const timerStore = reactive({
@@ -110,14 +153,240 @@ export default {
       return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
     }
 
+    // Funciones de dragging
+    const startDrag = (e) => {
+      // Solo iniciar drag si no es un botón
+      if (e.target.closest('button')) {
+        return // No arrastrar si se tocó un botón
+      }
+      
+      isDragging.value = true
+      const clientX = e.clientX || e.touches[0].clientX
+      const clientY = e.clientY || e.touches[0].clientY
+      
+      dragOffset.x = clientX - floatingPosition.x
+      dragOffset.y = clientY - floatingPosition.y
+      
+      document.addEventListener('mousemove', onDrag)
+      document.addEventListener('mouseup', stopDrag)
+      document.addEventListener('touchmove', onDrag)
+      document.addEventListener('touchend', stopDrag)
+      
+      e.preventDefault()
+    }
+
+    const onDrag = (e) => {
+      if (!isDragging.value) return
+      
+      const clientX = e.clientX || e.touches[0].clientX
+      const clientY = e.clientY || e.touches[0].clientY
+      
+      let newX = clientX - dragOffset.x
+      let newY = clientY - dragOffset.y
+      
+      // Limitar a los bordes de la ventana
+      const timerWidth = 120
+      const timerHeight = 120
+      newX = Math.max(0, Math.min(window.innerWidth - timerWidth, newX))
+      newY = Math.max(0, Math.min(window.innerHeight - timerHeight, newY))
+      
+      floatingPosition.x = newX
+      floatingPosition.y = newY
+    }
+
+    const stopDrag = () => {
+      isDragging.value = false
+      document.removeEventListener('mousemove', onDrag)
+      document.removeEventListener('mouseup', stopDrag)
+      document.removeEventListener('touchmove', onDrag)
+      document.removeEventListener('touchend', stopDrag)
+    }
+
+    // Controles del cronómetro flotante
+    const toggleFloatingTimer = (e) => {
+      if (e) {
+        e.preventDefault()
+        e.stopPropagation()
+      }
+      
+      if (timerStore.isActive) {
+        // PAUSAR: Detener completamente el cronómetro
+        clearInterval(timerStore.intervalId)
+        timerStore.intervalId = null
+        timerStore.isActive = false
+        console.log('⏸️ Cronómetro PAUSADO')
+      } else {
+        // PLAY: Iniciar o reanudar cronómetro
+        if (timerStore.currentTime === 0) {
+          // Inicializar con tiempo de entrenamiento por defecto
+          timerStore.currentTime = timerStore.isResting ? 90 : 180
+          console.log('🆕 Nuevo cronómetro iniciado:', timerStore.currentTime, 'segundos')
+        } else {
+          console.log('▶️ Cronómetro REANUDADO desde:', timerStore.currentTime, 'segundos')
+        }
+        
+        timerStore.isActive = true
+        timerStore.intervalId = setInterval(() => {
+          if (timerStore.currentTime > 0) {
+            timerStore.currentTime--
+          } else {
+            // Timer terminado
+            clearInterval(timerStore.intervalId)
+            timerStore.intervalId = null
+            timerStore.isActive = false
+            console.log('⏰ Timer terminado!')
+            
+            // Alternar entre entrenamiento y descanso
+            if (timerStore.isResting) {
+              // Cambiar a modo entrenamiento
+              timerStore.isResting = false
+              timerStore.currentTime = 180 // 3 minutos
+              console.log('💪 Cambiando a ENTRENAMIENTO')
+            } else {
+              // Cambiar a modo descanso
+              timerStore.isResting = true
+              timerStore.currentTime = 90 // 1.5 minutos
+              console.log('😴 Cambiando a DESCANSO')
+            }
+            
+            // Auto-iniciar el siguiente timer
+            timerStore.isActive = true
+            timerStore.intervalId = setInterval(() => {
+              if (timerStore.currentTime > 0) {
+                timerStore.currentTime--
+              } else {
+                clearInterval(timerStore.intervalId)
+                timerStore.intervalId = null
+                timerStore.isActive = false
+                console.log('⏰ Ciclo completado')
+              }
+            }, 1000)
+          }
+        }, 1000)
+      }
+      
+      // NO enviar evento para evitar doble ejecución
+      // window.dispatchEvent(new CustomEvent('toggleTimer'))
+    }
+
+    const resetFloatingTimer = (e) => {
+      if (e) {
+        e.preventDefault()
+        e.stopPropagation()
+      }
+      
+      // RESET: Limpiar completamente el cronómetro
+      clearInterval(timerStore.intervalId)
+      timerStore.intervalId = null
+      timerStore.isActive = false
+      timerStore.currentTime = 0
+      timerStore.isResting = false
+      console.log('🔄 Cronómetro RESETEADO')
+      
+      // NO enviar evento para evitar conflictos
+      // window.dispatchEvent(new CustomEvent('resetTimer'))
+    }
+    
+    // Variables para manejar touch events correctamente
+    const touchStartTime = ref(0)
+    const touchStartPos = ref({ x: 0, y: 0 })
+    
+    const handleTouchStart = (e) => {
+      touchStartTime.value = Date.now()
+      touchStartPos.value = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY
+      }
+      e.stopPropagation() // Evitar que inicie el drag
+      console.log('👆 Touch start en botón')
+    }
+    
+    const handleToggleTouch = (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      
+      const touchDuration = Date.now() - touchStartTime.value
+      const touchEndPos = {
+        x: e.changedTouches[0].clientX,
+        y: e.changedTouches[0].clientY
+      }
+      
+      const moveDistance = Math.sqrt(
+        Math.pow(touchEndPos.x - touchStartPos.value.x, 2) + 
+        Math.pow(touchEndPos.y - touchStartPos.value.y, 2)
+      )
+      
+      // Solo ejecutar si fue un tap rápido y sin mucho movimiento
+      if (touchDuration < 300 && moveDistance < 10) {
+        console.log('⏯️ Toggle timer ejecutado')
+        toggleFloatingTimer()
+      } else {
+        console.log('❌ Touch cancelado - duración:', touchDuration, 'distancia:', moveDistance)
+      }
+    }
+    
+    const handleResetTouch = (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      
+      const touchDuration = Date.now() - touchStartTime.value
+      const touchEndPos = {
+        x: e.changedTouches[0].clientX,
+        y: e.changedTouches[0].clientY
+      }
+      
+      const moveDistance = Math.sqrt(
+        Math.pow(touchEndPos.x - touchStartPos.value.x, 2) + 
+        Math.pow(touchEndPos.y - touchStartPos.value.y, 2)
+      )
+      
+      // Solo ejecutar si fue un tap rápido y sin mucho movimiento
+      if (touchDuration < 300 && moveDistance < 10) {
+        console.log('🔄 Reset timer ejecutado')
+        resetFloatingTimer()
+      } else {
+        console.log('❌ Touch reset cancelado - duración:', touchDuration, 'distancia:', moveDistance)
+      }
+    }
+
+    // Actualizar posición cuando cambie el tamaño de ventana
+    const updatePosition = () => {
+      const timerWidth = 120
+      const timerHeight = 120
+      if (floatingPosition.x + timerWidth > window.innerWidth) {
+        floatingPosition.x = window.innerWidth - timerWidth
+      }
+      if (floatingPosition.y + timerHeight > window.innerHeight) {
+        floatingPosition.y = window.innerHeight - timerHeight
+      }
+    }
+
+    onMounted(() => {
+      window.addEventListener('resize', updatePosition)
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', updatePosition)
+      stopDrag()
+    })
+
     // Hacer el timerStore accesible globalmente
     window.timerStore = timerStore
 
     return {
       selectedUser,
       timerStore,
+      floatingTimer,
+      floatingPosition,
       changeUser,
-      formatTime
+      formatTime,
+      startDrag,
+      toggleFloatingTimer,
+      resetFloatingTimer,
+      handleTouchStart,
+      handleToggleTouch,
+      handleResetTouch,
+      touchStartPos
     }
   }
 }

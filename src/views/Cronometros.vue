@@ -12,34 +12,45 @@
       <!-- Display del tiempo -->
       <div class="mb-6">
         <div class="text-5xl font-bold mb-2" 
-             :class="timerStore.isResting ? 'text-gym-orange' : 'text-gym-green'">
+             :class="preparingPhase ? 'text-gym-yellow' : (timerStore.isResting ? 'text-gym-orange' : 'text-gym-green')">
           {{ formatTime(timerStore.currentTime) }}
         </div>
         <div class="text-lg font-semibold"
-             :class="timerStore.isResting ? 'text-gym-orange' : 'text-gym-green'">
-          {{ timerStore.isResting ? 'TIEMPO DE DESCANSO' : 'TIEMPO DE ENTRENAMIENTO' }}
+             :class="preparingPhase ? 'text-gym-yellow' : (timerStore.isResting ? 'text-gym-orange' : 'text-gym-green')">
+          {{ preparingPhase ? '⚡ PREPARÁNDOTE...' : (timerStore.isResting ? '😴 TIEMPO DE DESCANSO' : '💪 TIEMPO DE ENTRENAMIENTO') }}
         </div>
       </div>
 
       <!-- Controles principales -->
-      <div class="flex justify-center space-x-4 mb-6">
+      <div class="grid grid-cols-3 gap-2 mb-6 max-w-sm mx-auto">
         <button
           @click="toggleTimer"
-          class="btn-primary text-lg px-6 py-3"
+          class="btn-primary text-sm px-3 py-2 flex items-center justify-center"
         >
-          {{ timerStore.isActive ? 'PAUSAR' : 'INICIAR' }}
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path v-if="timerStore.isActive" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9 0h10m-11 0h12"></path>
+          </svg>
+          {{ timerStore.isActive ? 'Pausar' : 'Iniciar' }}
         </button>
         <button
           @click="resetTimer"
-          class="btn-secondary text-lg px-6 py-3"
+          class="btn-secondary text-sm px-3 py-2 flex items-center justify-center"
         >
-          RESET
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          Reset
         </button>
         <button
           @click="switchMode"
-          class="btn-gym bg-gym-orange text-gym-dark text-lg px-6 py-3"
+          class="btn-gym bg-gym-orange text-gym-dark text-sm px-3 py-2 flex items-center justify-center"
         >
-          {{ timerStore.isResting ? 'ENTRENAR' : 'DESCANSAR' }}
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path v-if="timerStore.isResting" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          {{ timerStore.isResting ? '💪' : '😴' }}
         </button>
       </div>
     </div>
@@ -63,6 +74,7 @@
               min="0"
               max="60"
               class="input-gym w-20 text-center"
+              :disabled="!workTimeEditing"
             />
           </div>
           <div class="flex items-center space-x-2">
@@ -73,13 +85,22 @@
               min="0"
               max="59"
               class="input-gym w-20 text-center"
+              :disabled="!workTimeEditing"
             />
           </div>
           <button
-            @click="setWorkTime"
+            @click="saveWorkTime"
             class="w-full btn-primary"
+            :disabled="!workTimeEditing"
           >
-            Configurar
+            💾 Guardar cambios
+          </button>
+          <button
+            v-if="!workTimeEditing"
+            @click="editWorkTime"
+            class="w-full btn-secondary mt-2"
+          >
+            ✏️ Editar tiempo
           </button>
         </div>
       </div>
@@ -101,6 +122,7 @@
               min="0"
               max="60"
               class="input-gym w-20 text-center"
+              :disabled="!restTimeEditing"
             />
           </div>
           <div class="flex items-center space-x-2">
@@ -111,13 +133,22 @@
               min="0"
               max="59"
               class="input-gym w-20 text-center"
+              :disabled="!restTimeEditing"
             />
           </div>
           <button
-            @click="setRestTime"
+            @click="saveRestTime"
             class="w-full btn-primary"
+            :disabled="!restTimeEditing"
           >
-            Configurar
+            💾 Guardar cambios
+          </button>
+          <button
+            v-if="!restTimeEditing"
+            @click="editRestTime"
+            class="w-full btn-secondary mt-2"
+          >
+            ✏️ Editar tiempo
           </button>
         </div>
       </div>
@@ -187,12 +218,18 @@ export default {
     const timerStore = window.timerStore
     const workMinutes = ref(1)
     const workSeconds = ref(0)
-    const restMinutes = ref(0)
-    const restSeconds = ref(30)
+    const restMinutes = ref(1)
+    const restSeconds = ref(0)
     
-    // Configuración de tiempos
+    // Estados de edición
+    const workTimeEditing = ref(false)
+    const restTimeEditing = ref(false)
+    const preparingPhase = ref(false)
+    const preparingTime = ref(5) // 5 segundos de preparación
+    
+    // Configuración de tiempos (por defecto 1 minuto cada uno)
     const workTime = ref(60) // segundos
-    const restTime = ref(30) // segundos
+    const restTime = ref(60) // segundos
     
     // Estadísticas
     const totalWorkTime = ref(parseInt(localStorage.getItem('totalWorkTime')) || 0)
@@ -212,22 +249,37 @@ export default {
       } else {
         // Iniciar
         if (timerStore.currentTime === 0) {
-          timerStore.currentTime = timerStore.isResting ? restTime.value : workTime.value
+          // Iniciar fase de preparación si no estamos descansando
+          if (!timerStore.isResting) {
+            preparingPhase.value = true
+            timerStore.currentTime = preparingTime.value
+          } else {
+            timerStore.currentTime = restTime.value
+          }
         }
         
         timerStore.intervalId = setInterval(() => {
           if (timerStore.currentTime > 0) {
             timerStore.currentTime--
             
-            // Actualizar estadísticas
-            if (timerStore.isResting) {
-              totalRestTime.value++
-            } else {
-              totalWorkTime.value++
+            // Solo actualizar estadísticas si no estamos en preparación
+            if (!preparingPhase.value) {
+              if (timerStore.isResting) {
+                totalRestTime.value++
+              } else {
+                totalWorkTime.value++
+              }
             }
           } else {
-            // Tiempo terminado - cambiar modo automáticamente
-            switchMode()
+            // Tiempo terminado
+            if (preparingPhase.value) {
+              // Fin de preparación, comenzar entrenamiento
+              preparingPhase.value = false
+              timerStore.currentTime = workTime.value
+            } else {
+              // Tiempo terminado - cambiar modo automáticamente
+              switchMode()
+            }
           }
         }, 1000)
         
@@ -238,10 +290,12 @@ export default {
     const resetTimer = () => {
       clearInterval(timerStore.intervalId)
       timerStore.isActive = false
+      preparingPhase.value = false
       timerStore.currentTime = timerStore.isResting ? restTime.value : workTime.value
     }
 
     const switchMode = () => {
+      preparingPhase.value = false
       timerStore.isResting = !timerStore.isResting
       timerStore.currentTime = timerStore.isResting ? restTime.value : workTime.value
       
@@ -252,15 +306,25 @@ export default {
       }
     }
 
-    const setWorkTime = () => {
+    const editWorkTime = () => {
+      workTimeEditing.value = true
+    }
+
+    const saveWorkTime = () => {
       workTime.value = workMinutes.value * 60 + workSeconds.value
-      if (!timerStore.isResting && !timerStore.isActive) {
+      workTimeEditing.value = false
+      if (!timerStore.isResting && !timerStore.isActive && !preparingPhase.value) {
         timerStore.currentTime = workTime.value
       }
     }
 
-    const setRestTime = () => {
+    const editRestTime = () => {
+      restTimeEditing.value = true
+    }
+
+    const saveRestTime = () => {
       restTime.value = restMinutes.value * 60 + restSeconds.value
+      restTimeEditing.value = false
       if (timerStore.isResting && !timerStore.isActive) {
         timerStore.currentTime = restTime.value
       }
@@ -275,7 +339,13 @@ export default {
       restMinutes.value = Math.floor(rest / 60)
       restSeconds.value = rest % 60
       
-      timerStore.currentTime = timerStore.isResting ? rest : work
+      // Deshabilitar edición
+      workTimeEditing.value = false
+      restTimeEditing.value = false
+      
+      if (!timerStore.isActive && !preparingPhase.value) {
+        timerStore.currentTime = timerStore.isResting ? rest : work
+      }
     }
 
     const resetStats = () => {
@@ -291,14 +361,30 @@ export default {
       localStorage.setItem('totalRestTime', totalRestTime.value.toString())
     })
 
+    // Escuchar eventos del cronómetro flotante
+    const handleFloatingToggle = () => {
+      toggleTimer()
+    }
+
+    const handleFloatingReset = () => {
+      resetTimer()
+    }
+
     onMounted(() => {
       // Inicializar el cronómetro
       if (timerStore.currentTime === 0) {
         timerStore.currentTime = workTime.value
       }
+      
+      // Escuchar eventos globales
+      window.addEventListener('toggleTimer', handleFloatingToggle)
+      window.addEventListener('resetTimer', handleFloatingReset)
     })
 
     onUnmounted(() => {
+      // Limpiar event listeners
+      window.removeEventListener('toggleTimer', handleFloatingToggle)
+      window.removeEventListener('resetTimer', handleFloatingReset)
       // No limpiar el cronómetro al salir de la vista para mantenerlo flotante
     })
 
@@ -310,12 +396,17 @@ export default {
       restSeconds,
       totalWorkTime,
       totalRestTime,
+      workTimeEditing,
+      restTimeEditing,
+      preparingPhase,
       formatTime,
       toggleTimer,
       resetTimer,
       switchMode,
-      setWorkTime,
-      setRestTime,
+      editWorkTime,
+      saveWorkTime,
+      editRestTime,
+      saveRestTime,
       setPreset,
       resetStats
     }
