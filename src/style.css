@@ -27,7 +27,32 @@
   }
   
   .card-gym {
-    @apply bg-gym-gray rounded-xl p-4 border border-gym-light-gray shadow-lg;
+    @apply bg-gym-card rounded-xl p-4 border border-gym-light-gray shadow-lg;
+  }
+  
+  /* Nuevos estilos para botones de repeticiones y series */
+  .info-badge {
+    @apply px-3 py-1 rounded-full font-bold text-sm inline-flex items-center justify-center min-w-[60px];
+  }
+  
+  .info-badge-series {
+    @apply info-badge bg-gym-cyan text-gym-dark;
+  }
+  
+  .info-badge-reps {
+    @apply info-badge bg-gym-green text-gym-dark;
+  }
+  
+  .info-badge-peso {
+    @apply info-badge bg-gym-orange text-gym-dark;
+  }
+  
+  .info-badge-duracion {
+    @apply info-badge bg-gym-yellow text-gym-dark;
+  }
+  
+  .info-badge-velocidad {
+    @apply info-badge bg-gym-pink text-gym-dark;
   }
   
   .input-gym {

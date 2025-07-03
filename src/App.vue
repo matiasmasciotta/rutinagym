@@ -31,7 +31,7 @@
     <div 
       v-if="timerStore.isActive || timerStore.currentTime > 0" 
       ref="floatingTimer"
-      class="fixed z-50 bg-gym-gray rounded-2xl border-2 border-gym-cyan shadow-lg shadow-gym-cyan/30 cursor-move select-none min-w-[140px]"
+      class="fixed z-50 bg-gym-card rounded-2xl border-2 border-gym-pink shadow-lg shadow-gym-pink/30 cursor-move select-none min-w-[140px]"
       :style="{ top: floatingPosition.y + 'px', left: floatingPosition.x + 'px' }"
       @mousedown="startDrag"
       @touchstart="startDrag"
@@ -46,27 +46,33 @@
         <!-- Controles -->
         <div class="flex justify-center space-x-3">
           <button
-            @click.stop.prevent="toggleFloatingTimer"
-            @touchstart.prevent="handleTouchStart"
-            @touchend.prevent="handleToggleTouch"
+            @click.stop.prevent="toggleFloatingTimer($event)"
+            @mousedown.stop.prevent
+            @touchstart.stop.prevent="handleTouchStart"
+            @touchend.stop.prevent="handleToggleTouch"
+            @touchmove.stop.prevent
             class="w-12 h-12 rounded-full bg-gym-cyan text-gym-dark flex items-center justify-center font-bold hover:scale-110 transition-transform active:scale-95 touch-manipulation"
             type="button"
+            tabindex="-1"
           >
-            <svg v-if="timerStore.isActive" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg v-if="timerStore.isActive" class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 9v6m4-6v6"></path>
             </svg>
-            <svg v-else class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <svg v-else class="w-6 h-6 pointer-events-none" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z"></path>
             </svg>
           </button>
           <button
-            @click.stop.prevent="resetFloatingTimer"
-            @touchstart.prevent="handleTouchStart"
-            @touchend.prevent="handleResetTouch"
+            @click.stop.prevent="resetFloatingTimer($event)"
+            @mousedown.stop.prevent
+            @touchstart.stop.prevent="handleTouchStart"
+            @touchend.stop.prevent="handleResetTouch"
+            @touchmove.stop.prevent
             class="w-12 h-12 rounded-full bg-gym-orange text-gym-dark flex items-center justify-center font-bold hover:scale-110 transition-transform active:scale-95 touch-manipulation"
             type="button"
+            tabindex="-1"
           >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
             </svg>
           </button>
@@ -204,9 +210,11 @@ export default {
 
     // Controles del cronómetro flotante
     const toggleFloatingTimer = (e) => {
+      // Prevenir cualquier comportamiento por defecto INMEDIATAMENTE
       if (e) {
         e.preventDefault()
         e.stopPropagation()
+        e.stopImmediatePropagation()
       }
       
       if (timerStore.isActive) {
@@ -270,9 +278,11 @@ export default {
     }
 
     const resetFloatingTimer = (e) => {
+      // Prevenir cualquier comportamiento por defecto INMEDIATAMENTE
       if (e) {
         e.preventDefault()
         e.stopPropagation()
+        e.stopImmediatePropagation()
       }
       
       // RESET: Limpiar completamente el cronómetro
@@ -283,8 +293,8 @@ export default {
       timerStore.isResting = false
       console.log('🔄 Cronómetro RESETEADO')
       
-      // NO enviar evento para evitar conflictos
-      // window.dispatchEvent(new CustomEvent('resetTimer'))
+      // Retornar false para asegurar que no se propague
+      return false
     }
     
     // Variables para manejar touch events correctamente
@@ -292,18 +302,23 @@ export default {
     const touchStartPos = ref({ x: 0, y: 0 })
     
     const handleTouchStart = (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      e.stopImmediatePropagation()
+      
       touchStartTime.value = Date.now()
       touchStartPos.value = {
         x: e.touches[0].clientX,
         y: e.touches[0].clientY
       }
-      e.stopPropagation() // Evitar que inicie el drag
       console.log('👆 Touch start en botón')
+      return false
     }
     
     const handleToggleTouch = (e) => {
       e.preventDefault()
       e.stopPropagation()
+      e.stopImmediatePropagation()
       
       const touchDuration = Date.now() - touchStartTime.value
       const touchEndPos = {
@@ -319,15 +334,18 @@ export default {
       // Solo ejecutar si fue un tap rápido y sin mucho movimiento
       if (touchDuration < 300 && moveDistance < 10) {
         console.log('⏯️ Toggle timer ejecutado')
-        toggleFloatingTimer()
+        toggleFloatingTimer(e)
       } else {
         console.log('❌ Touch cancelado - duración:', touchDuration, 'distancia:', moveDistance)
       }
+      
+      return false
     }
     
     const handleResetTouch = (e) => {
       e.preventDefault()
       e.stopPropagation()
+      e.stopImmediatePropagation()
       
       const touchDuration = Date.now() - touchStartTime.value
       const touchEndPos = {
@@ -343,10 +361,12 @@ export default {
       // Solo ejecutar si fue un tap rápido y sin mucho movimiento
       if (touchDuration < 300 && moveDistance < 10) {
         console.log('🔄 Reset timer ejecutado')
-        resetFloatingTimer()
+        resetFloatingTimer(e)
       } else {
         console.log('❌ Touch reset cancelado - duración:', touchDuration, 'distancia:', moveDistance)
       }
+      
+      return false
     }
 
     // Actualizar posición cuando cambie el tamaño de ventana

@@ -8,10 +8,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        'gym-dark': '#0a0a0a',
-        'gym-darker': '#050505',
-        'gym-gray': '#1a1a1a',
-        'gym-light-gray': '#2a2a2a',
+        'gym-dark': '#1e1e1e',
+        'gym-darker': '#171717',
+        'gym-gray': '#2d2d2d',
+        'gym-light-gray': '#3a3a3a',
+        'gym-card': '#404040',
         'gym-cyan': '#00ffff',
         'gym-green': '#00ff00',
         'gym-yellow': '#ffff00',

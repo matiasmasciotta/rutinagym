@@ -3,15 +3,15 @@
     <!-- Selector de días -->
     <div class="grid grid-cols-3 gap-3">
       <button
-        v-for="dia in Object.keys(rutinasUsuario)"
-        :key="dia"
-        @click="diaSeleccionado = dia"
+        v-for="dia in rutinasUsuario.days || []"
+        :key="'dia' + dia.dayNumber"
+        @click="diaSeleccionado = 'dia' + dia.dayNumber"
         class="p-3 rounded-lg font-semibold transition-all"
-        :class="diaSeleccionado === dia 
+        :class="diaSeleccionado === 'dia' + dia.dayNumber 
           ? 'bg-gradient-to-r from-gym-cyan to-gym-green text-gym-dark' 
           : 'bg-gym-light-gray text-white hover:bg-gym-gray'"
       >
-        {{ getNombreDia(dia) }}
+        {{ getNombreDia('dia' + dia.dayNumber) }}
       </button>
     </div>
 
@@ -116,44 +116,91 @@
           </div>
         </div>
         
-        <div v-else class="space-y-2">
+        <div v-else class="space-y-3">
           <p class="text-white font-medium">{{ rutinaActual.calentamiento.ejercicio }}</p>
-          <p v-if="rutinaActual.calentamiento.duracion" class="text-gray-300 text-sm">{{ rutinaActual.calentamiento.duracion }}</p>
-          <p v-if="rutinaActual.calentamiento.descanso" class="text-gym-cyan text-sm">
-            Descanso: {{ rutinaActual.calentamiento.descanso }}
-          </p>
+          <div class="flex flex-wrap justify-center gap-3">
+            <div v-if="rutinaActual.calentamiento.duracion" class="text-center">
+              <div class="text-xs text-gray-400 uppercase tracking-wide">Duración</div>
+              <div class="info-badge-duracion mt-1">
+                {{ rutinaActual.calentamiento.duracion }}
+              </div>
+            </div>
+            <div v-if="rutinaActual.calentamiento.descanso" class="text-center">
+              <div class="text-xs text-gray-400 uppercase tracking-wide">Descanso</div>
+              <div class="info-badge-series mt-1">
+                {{ rutinaActual.calentamiento.descanso }}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Ejercicios -->
       <div class="space-y-4">
         <div
-          v-for="ejercicio in rutinaActual.ejercicios"
-          :key="ejercicio.id"
+          v-for="ejercicio in rutinaActual.items"
+          :key="ejercicio._id"
           class="card-gym"
         >
-          <div class="flex items-start justify-between mb-3">
-            <h4 class="text-lg font-semibold text-white flex-1">
-              {{ ejercicio.nombre }}
-            </h4>
-            <button
-              @click="toggleEditing(ejercicio.id)"
-              class="text-gym-cyan hover:text-gym-green transition-colors ml-2"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-              </svg>
-            </button>
+          <!-- Ejercicio individual -->
+          <div v-if="ejercicio.type === 'exercise'">
+            <div class="flex items-start justify-between mb-3">
+              <h4 class="text-lg font-semibold text-white flex-1">
+                {{ ejercicio.name }}
+              </h4>
+              <button
+                @click="toggleEditing(ejercicio._id)"
+                class="text-gym-cyan hover:text-gym-green transition-colors ml-2"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Grupo de ejercicios -->
+          <div v-else-if="ejercicio.type === 'group'">
+            <div class="flex items-start justify-between mb-3">
+              <h4 class="text-lg font-semibold text-gym-yellow flex-1">
+                🏋️‍♀️ {{ ejercicio.name }}
+              </h4>
+              <button
+                @click="toggleEditing(ejercicio._id)"
+                class="text-gym-cyan hover:text-gym-green transition-colors ml-2"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+              </button>
+            </div>
+            
+            <!-- Ejercicios del grupo -->
+            <div class="space-y-3 ml-4 border-l-2 border-gym-yellow/30 pl-4">
+              <div v-for="subEjercicio in ejercicio.exercises" :key="subEjercicio._id" class="bg-gym-gray/50 p-3 rounded-lg">
+                <h5 class="font-semibold text-white mb-2">{{ subEjercicio.name }}</h5>
+                <div class="flex justify-center space-x-4">
+                  <div class="text-center">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Series</div>
+                    <div class="info-badge-series mt-1">{{ subEjercicio.series }}</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Reps</div>
+                    <div class="info-badge-reps mt-1">{{ subEjercicio.repetitions }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <!-- Información del ejercicio -->
-          <div class="space-y-3">
+          <!-- Información del ejercicio (solo para exercises, no groups) -->
+          <div v-if="ejercicio.type === 'exercise'" class="space-y-3">
             <!-- Nombre del ejercicio (editable) -->
             <div class="space-y-2">
               <span class="text-gym-yellow font-semibold text-sm">Ejercicio:</span>
-              <div v-if="editingId === ejercicio.id">
+              <div v-if="editingId === ejercicio._id">
                 <textarea
-                  v-model="ejercicio.nombre"
+                  v-model="ejercicio.name"
                   class="input-gym w-full resize-none"
                   rows="2"
                   placeholder="Nombre del ejercicio"
@@ -161,119 +208,159 @@
               </div>
             </div>
 
-            <!-- Peso -->
-            <div class="flex items-center space-x-3">
-              <span class="text-gym-green font-semibold">Peso:</span>
-              <div v-if="editingId === ejercicio.id" class="flex items-center space-x-2">
-                <input
-                  v-model.number="ejercicio.peso"
-                  type="number"
-                  min="0"
-                  step="0.5"
-                  class="input-gym w-20 text-center"
-                />
-                <span class="text-gray-300">kg</span>
+            <!-- Pesos - Diseño mejorado -->
+            <div class="flex items-center justify-center space-x-4 my-4">
+              <!-- Peso principal -->
+              <div class="text-center">
+                <div v-if="editingId === ejercicio._id" class="space-y-2">
+                  <span class="text-gym-orange font-semibold text-sm">Peso:</span>
+                  <div class="flex items-center space-x-2">
+                    <input
+                      v-model.number="ejercicio.peso"
+                      type="number"
+                      min="0"
+                      step="0.5"
+                      class="input-gym w-20 text-center"
+                    />
+                    <span class="text-gray-300 text-sm">kg</span>
+                  </div>
+                </div>
+                <div v-else class="space-y-1">
+                  <div class="text-xs text-gray-400 uppercase tracking-wide">Peso</div>
+                  <div class="info-badge-peso">
+                    {{ ejercicio.peso > 0 ? ejercicio.peso + ' kg' : 'Sin peso' }}
+                  </div>
+                </div>
               </div>
-              <span v-else class="text-white font-bold">
-                {{ ejercicio.peso > 0 ? ejercicio.peso + ' kg' : 'Sin peso' }}
-              </span>
+              
+              <!-- Peso complemento -->
+              <div v-if="ejercicio.pesoComplemento || editingId === ejercicio._id" class="text-center">
+                <div v-if="editingId === ejercicio._id" class="space-y-2">
+                  <span class="text-gym-pink font-semibold text-sm">Peso comp:</span>
+                  <div class="flex items-center space-x-2">
+                    <input
+                      v-model.number="ejercicio.pesoComplemento"
+                      type="number"
+                      min="0"
+                      step="0.5"
+                      class="input-gym w-20 text-center"
+                      placeholder="0"
+                    />
+                    <span class="text-gray-300 text-sm">kg</span>
+                  </div>
+                </div>
+                <div v-else-if="ejercicio.pesoComplemento" class="space-y-1">
+                  <div class="text-xs text-gray-400 uppercase tracking-wide">Peso Comp</div>
+                  <div class="info-badge-velocidad">
+                    {{ ejercicio.pesoComplemento }} kg
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <!-- Peso complemento -->
-            <div class="flex items-center space-x-3">
-              <span class="text-gym-orange font-semibold">Peso comp:</span>
-              <div v-if="editingId === ejercicio.id" class="flex items-center space-x-2">
-                <input
-                  v-model.number="ejercicio.pesoComplemento"
-                  type="number"
-                  min="0"
-                  step="0.5"
-                  class="input-gym w-20 text-center"
-                  placeholder="0"
-                />
-                <span class="text-gray-300">kg</span>
+            <!-- Series y Repeticiones - Diseño mejorado -->
+            <div class="flex items-center justify-center space-x-4 my-4">
+              <!-- Series -->
+              <div class="text-center">
+                <div v-if="editingId === ejercicio._id" class="space-y-2">
+                  <span class="text-gym-cyan font-semibold text-sm">Series:</span>
+                  <input
+                    v-model.number="ejercicio.series"
+                    type="number"
+                    min="1"
+                    max="10"
+                    class="input-gym w-20 text-center"
+                  />
+                </div>
+                <div v-else class="space-y-1">
+                  <div class="text-xs text-gray-400 uppercase tracking-wide">Series</div>
+                  <div class="info-badge-series">
+                    {{ ejercicio.series }}
+                  </div>
+                </div>
               </div>
-              <span v-else-if="ejercicio.pesoComplemento" class="text-white font-bold">{{ ejercicio.pesoComplemento }} kg</span>
-              <span v-else class="text-gray-500">-</span>
+              
+              <!-- Repeticiones -->
+              <div class="text-center">
+                <div v-if="editingId === ejercicio._id" class="space-y-2">
+                  <span class="text-gym-green font-semibold text-sm">Reps:</span>
+                  <input
+                    v-model="ejercicio.repetitions"
+                    type="text"
+                    class="input-gym w-full"
+                    placeholder="ej: 12, 12+10+8, al fallo"
+                  />
+                </div>
+                <div v-else class="space-y-1">
+                  <div class="text-xs text-gray-400 uppercase tracking-wide">Reps</div>
+                  <div class="info-badge-reps">
+                    {{ ejercicio.repetitions }}
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <!-- Repeticiones -->
-            <div class="flex items-center space-x-3">
-              <span class="text-gym-pink font-semibold">Reps:</span>
-              <div v-if="editingId === ejercicio.id" class="flex-1">
-                <input
-                  v-model="ejercicio.repeticiones"
-                  type="text"
-                  class="input-gym w-full"
-                  placeholder="ej: 12, 12+10+8, al fallo"
-                />
+            <!-- Duración y Velocidad - Diseño mejorado -->
+            <div v-if="ejercicio.duracion || ejercicio.velocidad || editingId === ejercicio._id" class="flex items-center justify-center space-x-4 my-4">
+              <!-- Duración -->
+              <div v-if="ejercicio.duracion || editingId === ejercicio._id" class="text-center">
+                <div v-if="editingId === ejercicio._id" class="space-y-2">
+                  <span class="text-gym-yellow font-semibold text-sm">Duración:</span>
+                  <input
+                    v-model="ejercicio.duracion"
+                    type="text"
+                    class="input-gym w-full"
+                    placeholder="ej: 30 seg, 1 min"
+                  />
+                </div>
+                <div v-else-if="ejercicio.duracion" class="space-y-1">
+                  <div class="text-xs text-gray-400 uppercase tracking-wide">Duración</div>
+                  <div class="info-badge-duracion">
+                    {{ ejercicio.duracion }}
+                  </div>
+                </div>
               </div>
-              <span v-else class="text-white">{{ ejercicio.repeticiones }}</span>
-            </div>
-
-            <!-- Series -->
-            <div class="flex items-center space-x-3">
-              <span class="text-gym-cyan font-semibold">Series:</span>
-              <div v-if="editingId === ejercicio.id" class="flex items-center space-x-2">
-                <input
-                  v-model.number="ejercicio.series"
-                  type="number"
-                  min="1"
-                  max="10"
-                  class="input-gym w-20 text-center"
-                />
+              
+              <!-- Velocidad -->
+              <div v-if="ejercicio.velocidad || editingId === ejercicio._id" class="text-center">
+                <div v-if="editingId === ejercicio._id" class="space-y-2">
+                  <span class="text-gym-green font-semibold text-sm">Velocidad:</span>
+                  <input
+                    v-model="ejercicio.velocidad"
+                    type="text"
+                    class="input-gym w-full"
+                    placeholder="ej: 8 km/h, moderada"
+                  />
+                </div>
+                <div v-else-if="ejercicio.velocidad" class="space-y-1">
+                  <div class="text-xs text-gray-400 uppercase tracking-wide">Velocidad</div>
+                  <div class="info-badge-velocidad">
+                    {{ ejercicio.velocidad }}
+                  </div>
+                </div>
               </div>
-              <span v-else class="text-white font-bold">{{ ejercicio.series }}</span>
-            </div>
-
-            <!-- Duración (para ejercicios basados en tiempo) -->
-            <div v-if="ejercicio.duracion || editingId === ejercicio.id" class="flex items-center space-x-3">
-              <span class="text-gym-yellow font-semibold">Duración:</span>
-              <div v-if="editingId === ejercicio.id" class="flex-1">
-                <input
-                  v-model="ejercicio.duracion"
-                  type="text"
-                  class="input-gym w-full"
-                  placeholder="ej: 30 segundos, 1 minuto, 5 minutos"
-                />
-              </div>
-              <span v-else-if="ejercicio.duracion" class="text-white">{{ ejercicio.duracion }}</span>
-            </div>
-
-            <!-- Velocidad (para ejercicios de cardio) -->
-            <div v-if="ejercicio.velocidad || editingId === ejercicio.id" class="flex items-center space-x-3">
-              <span class="text-gym-green font-semibold">Velocidad:</span>
-              <div v-if="editingId === ejercicio.id" class="flex-1">
-                <input
-                  v-model="ejercicio.velocidad"
-                  type="text"
-                  class="input-gym w-full"
-                  placeholder="ej: 8 km/h, moderada, intensa"
-                />
-              </div>
-              <span v-else-if="ejercicio.velocidad" class="text-white">{{ ejercicio.velocidad }}</span>
             </div>
 
             <!-- Descripción -->
-            <div class="space-y-2">
+            <div class="space-y-2 mt-4">
               <span class="text-gray-400 font-semibold text-sm">Notas:</span>
-              <div v-if="editingId === ejercicio.id">
+              <div v-if="editingId === ejercicio._id">
                 <textarea
-                  v-model="ejercicio.descripcion"
+                  v-model="ejercicio.notes"
                   class="input-gym w-full resize-none"
                   rows="3"
                   placeholder="Descripción, técnica, consejos..."
                 />
               </div>
-              <div v-else-if="ejercicio.descripcion" class="mt-2">
-                <p class="text-gray-300 text-sm italic bg-gym-light-gray/30 p-2 rounded">{{ ejercicio.descripcion }}</p>
+              <div v-else-if="ejercicio.notes" class="mt-2">
+                <p class="text-gray-300 text-sm italic bg-gym-gray/50 p-3 rounded-lg border border-gym-light-gray/30">{{ ejercicio.notes }}</p>
               </div>
               <div v-else class="text-gray-500 text-sm">Sin notas</div>
             </div>
           </div>
 
           <!-- Botones de acción -->
-          <div v-if="editingId === ejercicio.id" class="grid grid-cols-2 gap-2 mt-4">
+          <div v-if="editingId === ejercicio._id" class="grid grid-cols-2 gap-2 mt-4">
             <button
               @click="guardarCambios"
               class="btn-primary"
@@ -293,7 +380,7 @@
               📋 Duplicar
             </button>
             <button
-              @click="eliminarEjercicio(ejercicio.id)"
+              @click="eliminarEjercicio(ejercicio._id)"
               class="btn-gym bg-red-600 text-white hover:bg-red-700"
             >
               🗑️ Eliminar
@@ -348,7 +435,7 @@ export default {
       if (datosGuardados) {
         datosLocales.value = JSON.parse(datosGuardados)
       } else {
-        datosLocales.value = JSON.parse(JSON.stringify(rutinasData[usuarioActual.value]?.rutinas)) || {}
+        datosLocales.value = JSON.parse(JSON.stringify(rutinasData[usuarioActual.value]?.data)) || {}
       }
     }
 
@@ -357,7 +444,8 @@ export default {
     })
 
     const rutinaActual = computed(() => {
-      return rutinasUsuario.value[diaSeleccionado.value] || null
+      const dayNumber = parseInt(diaSeleccionado.value.replace('dia', ''))
+      return rutinasUsuario.value.days?.find(day => day.dayNumber === dayNumber) || null
     })
 
     const getNombreDia = (dia) => {
@@ -385,44 +473,46 @@ export default {
     }
 
     const agregarEjercicio = () => {
-      if (!datosLocales.value[diaSeleccionado.value]) {
+      if (!rutinaActual.value) {
         crearRutinaDia()
       }
       
-      const nuevoId = Math.max(...datosLocales.value[diaSeleccionado.value].ejercicios.map(e => e.id), 0) + 1
+      const nuevoId = Date.now().toString()
       const nuevoEjercicio = {
-        id: nuevoId,
-        nombre: "Nuevo Ejercicio",
+        _id: nuevoId,
+        type: "exercise",
+        name: "Nuevo Ejercicio",
+        series: 3,
+        repetitions: "12",
         peso: 0,
         pesoComplemento: 0,
-        repeticiones: "12",
-        series: 3,
-        descripcion: ""
+        notes: "",
+        exercises: []
       }
       
-      datosLocales.value[diaSeleccionado.value].ejercicios.push(nuevoEjercicio)
+      rutinaActual.value.items.push(nuevoEjercicio)
       editingId.value = nuevoId
       guardarCambios()
     }
 
     const duplicarEjercicio = (ejercicio) => {
-      const nuevoId = Math.max(...datosLocales.value[diaSeleccionado.value].ejercicios.map(e => e.id), 0) + 1
+      const nuevoId = Date.now().toString()
       const ejercicioDuplicado = {
         ...ejercicio,
-        id: nuevoId,
-        nombre: ejercicio.nombre + " (Copia)"
+        _id: nuevoId,
+        name: ejercicio.name + " (Copia)"
       }
       
-      datosLocales.value[diaSeleccionado.value].ejercicios.push(ejercicioDuplicado)
+      rutinaActual.value.items.push(ejercicioDuplicado)
       editingId.value = nuevoId
       guardarCambios()
     }
 
     const eliminarEjercicio = (id) => {
       if (confirm('¿Estás seguro de que quieres eliminar este ejercicio?')) {
-        const index = datosLocales.value[diaSeleccionado.value].ejercicios.findIndex(e => e.id === id)
+        const index = rutinaActual.value.items.findIndex(e => e._id === id)
         if (index > -1) {
-          datosLocales.value[diaSeleccionado.value].ejercicios.splice(index, 1)
+          rutinaActual.value.items.splice(index, 1)
           editingId.value = null
           guardarCambios()
         }
@@ -430,16 +520,26 @@ export default {
     }
 
     const crearRutinaDia = () => {
-      if (!datosLocales.value[diaSeleccionado.value]) {
-        datosLocales.value[diaSeleccionado.value] = {
+      const dayNumber = parseInt(diaSeleccionado.value.replace('dia', ''))
+      if (!datosLocales.value.days) {
+        datosLocales.value.days = []
+      }
+      
+      const existingDay = datosLocales.value.days.find(day => day.dayNumber === dayNumber)
+      if (!existingDay) {
+        const nuevoDia = {
+          dayNumber: dayNumber,
+          muscularGroups: ["NUEVO GRUPO"],
+          items: [],
           titulo: `Rutina ${getNombreDia(diaSeleccionado.value)}`,
           calentamiento: {
             ejercicio: "Calentamiento general",
             duracion: "5-10 minutos",
             descanso: "30 seg entre series"
           },
-          ejercicios: []
+          _id: Date.now().toString()
         }
+        datosLocales.value.days.push(nuevoDia)
         guardarCambios()
       }
     }
