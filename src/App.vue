@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen bg-gym-dark text-white font-gym">
+  <div class="min-h-screen bg-gym-dark text-white font-gym transition-colors duration-300">
     <!-- Header -->
-    <header class="bg-gym-darker border-b border-gym-light-gray p-4">
+    <header class="bg-gym-darker border-b border-gym-light-gray/30 p-4 backdrop-blur-sm">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-neon">
+        <h1 class="text-2xl font-bold bg-gradient-cyber bg-clip-text text-transparent">
           RutinaGym
         </h1>
         <!-- Selector de usuario -->
@@ -11,7 +11,7 @@
           <select 
             v-model="selectedUser" 
             @change="changeUser"
-            class="input-gym text-sm pr-8"
+            class="input-gym text-sm pr-8 bg-gradient-to-r from-gym-gray to-gym-light-gray border border-gym-light-gray/50 rounded-xl shadow-lg"
           >
             <option value="matias">Matías 💪</option>
             <option value="marisa">Marisa 🏋️‍♀️</option>
@@ -29,17 +29,30 @@
 
     <!-- Cronómetro Flotante Draggable -->
     <div 
-      v-if="timerStore.isActive || timerStore.currentTime > 0" 
+      v-if="timerStore.showFloating" 
       ref="floatingTimer"
-      class="fixed z-50 bg-gym-card rounded-2xl border-2 border-gym-pink shadow-lg shadow-gym-pink/30 cursor-move select-none min-w-[140px]"
+      class="fixed z-50 bg-gym-card rounded-2xl border border-transparent bg-gradient-to-r from-gym-light-gray/80 to-gym-card/80 backdrop-blur-md shadow-2xl cursor-move select-none min-w-[140px]"
+      style="background: linear-gradient(135deg, rgba(45,45,45,0.95) 0%, rgba(61,61,61,0.95) 100%); border: 1px solid rgba(6,182,212,0.3); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.4), 0 10px 10px -5px rgba(0,0,0,0.2), 0 0 20px rgba(6,182,212,0.1);"
       :style="{ top: floatingPosition.y + 'px', left: floatingPosition.x + 'px' }"
       @mousedown="startDrag"
       @touchstart="startDrag"
     >
       <div class="p-4 text-center">
-        <div class="text-sm text-gym-cyan font-semibold mb-2">
+        <button
+          @click.stop.prevent="toggleMode($event)"
+          @mousedown.stop.prevent
+          @touchstart.stop.prevent="handleTouchStart"
+          @touchend.stop.prevent="handleModeTouch"
+          @touchmove.stop.prevent
+          :class="timerStore.isActive 
+            ? 'text-sm text-gray-500 font-semibold mb-2 cursor-not-allowed bg-transparent border-none p-1 rounded opacity-60' 
+            : 'text-sm text-gym-cyan font-semibold mb-2 hover:text-gym-green transition-colors cursor-pointer bg-transparent border-none p-1 rounded'"
+          type="button"
+          tabindex="-1"
+          :disabled="timerStore.isActive"
+        >
           {{ timerStore.isResting ? '😴 DESCANSO' : '💪 ENTRENA' }}
-        </div>
+        </button>
         <div class="text-2xl font-bold text-white mb-3">
           {{ formatTime(timerStore.currentTime) }}
         </div>
@@ -51,7 +64,7 @@
             @touchstart.stop.prevent="handleTouchStart"
             @touchend.stop.prevent="handleToggleTouch"
             @touchmove.stop.prevent
-            class="w-12 h-12 rounded-full bg-gym-cyan text-gym-dark flex items-center justify-center font-bold hover:scale-110 transition-transform active:scale-95 touch-manipulation"
+            class="w-12 h-12 rounded-full bg-gradient-to-r from-gym-emerald to-gym-emerald-light text-white flex items-center justify-center font-bold hover:scale-110 transition-all duration-300 active:scale-95 touch-manipulation shadow-lg shadow-emerald-500/25"
             type="button"
             tabindex="-1"
           >
@@ -68,7 +81,7 @@
             @touchstart.stop.prevent="handleTouchStart"
             @touchend.stop.prevent="handleResetTouch"
             @touchmove.stop.prevent
-            class="w-12 h-12 rounded-full bg-gym-orange text-gym-dark flex items-center justify-center font-bold hover:scale-110 transition-transform active:scale-95 touch-manipulation"
+            class="w-12 h-12 rounded-full bg-gradient-to-r from-gym-slate to-gym-slate-light text-white flex items-center justify-center font-bold hover:scale-110 transition-all duration-300 active:scale-95 touch-manipulation shadow-lg shadow-slate-500/25"
             type="button"
             tabindex="-1"
           >
@@ -81,39 +94,45 @@
     </div>
 
     <!-- Bottom Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-gym-darker border-t border-gym-light-gray">
+    <nav class="fixed bottom-0 left-0 right-0 bg-gym-darker/90 backdrop-blur-md border-t border-gym-light-gray/30">
       <div class="flex justify-around py-2">
         <router-link
           to="/rutinas"
-          class="flex flex-col items-center p-2 rounded-lg transition-colors"
-          :class="$route.name === 'rutinas' ? 'text-gym-cyan' : 'text-gray-400'"
+          class="flex flex-col items-center p-3 rounded-xl transition-all duration-300"
+          :class="$route.name === 'rutinas' 
+            ? 'text-gym-cyan bg-gym-cyan/10 shadow-lg shadow-cyan-500/20' 
+            : 'text-gray-400 hover:text-gym-cyan hover:bg-gym-cyan/5'"
         >
           <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
           </svg>
-          <span class="text-xs">Rutinas</span>
+          <span class="text-xs font-medium">Rutinas</span>
         </router-link>
 
         <router-link
           to="/cronometros"
-          class="flex flex-col items-center p-2 rounded-lg transition-colors"
-          :class="$route.name === 'cronometros' ? 'text-gym-green' : 'text-gray-400'"
+          class="flex flex-col items-center p-3 rounded-xl transition-all duration-300"
+          :class="$route.name === 'cronometros' 
+            ? 'text-gym-emerald bg-gym-emerald/10 shadow-lg shadow-emerald-500/20' 
+            : 'text-gray-400 hover:text-gym-emerald hover:bg-gym-emerald/5'"
         >
           <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-          <span class="text-xs">Tiempo</span>
+          <span class="text-xs font-medium">Tiempo</span>
         </router-link>
 
         <router-link
           to="/perfil"
-          class="flex flex-col items-center p-2 rounded-lg transition-colors"
-          :class="$route.name === 'perfil' ? 'text-gym-yellow' : 'text-gray-400'"
+          class="flex flex-col items-center p-3 rounded-xl transition-all duration-300"
+          :class="$route.name === 'perfil' 
+            ? 'text-gym-orange bg-gym-orange/10 shadow-lg shadow-orange-500/20' 
+            : 'text-gray-400 hover:text-gym-orange hover:bg-gym-orange/5'"
         >
           <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
           </svg>
-          <span class="text-xs">Perfil</span>
+          <span class="text-xs font-medium">Perfil</span>
         </router-link>
       </div>
     </nav>
@@ -129,22 +148,25 @@ export default {
     const selectedUser = ref(localStorage.getItem('selectedUser') || 'matias')
     const floatingTimer = ref(null)
     
-    // Posición del cronómetro flotante
+    // Posición del cronómetro flotante - con persistencia
+    const savedPosition = JSON.parse(localStorage.getItem('floatingTimerPosition') || '{}')
     const floatingPosition = reactive({
-      x: window.innerWidth - 120, // Posición inicial derecha
-      y: 80 // Posición inicial superior
+      x: savedPosition.x || window.innerWidth - 160, // Posición inicial derecha
+      y: savedPosition.y || 80 // Posición inicial superior
     })
     
     // Variables para el dragging
     const isDragging = ref(false)
     const dragOffset = reactive({ x: 0, y: 0 })
     
-    // Store global del cronómetro
+    // Store global del cronómetro - con persistencia
+    const savedTimerState = JSON.parse(localStorage.getItem('timerState') || '{}')
     const timerStore = reactive({
-      isActive: false,
-      currentTime: 0,
-      isResting: false,
-      intervalId: null
+      isActive: false, // No reanudar automáticamente
+      currentTime: savedTimerState.currentTime || 0,
+      isResting: savedTimerState.isResting || false,
+      intervalId: null,
+      showFloating: savedTimerState.showFloating !== false // Mostrar por defecto, ocultar solo si está explícitamente false
     })
 
     const changeUser = () => {
@@ -157,6 +179,47 @@ export default {
       const mins = Math.floor(seconds / 60)
       const secs = seconds % 60
       return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+    }
+
+    // Función para guardar el estado del cronómetro
+    const saveTimerState = () => {
+      localStorage.setItem('timerState', JSON.stringify({
+        currentTime: timerStore.currentTime,
+        isResting: timerStore.isResting,
+        showFloating: timerStore.showFloating
+      }))
+    }
+
+    // Función para cambiar entre entrenamiento y descanso
+    const toggleMode = (e) => {
+      // Prevenir eventos y propagación
+      if (e) {
+        e.preventDefault()
+        e.stopPropagation()
+        e.stopImmediatePropagation()
+      }
+      
+      // NO permitir cambio si el cronómetro está activo
+      if (timerStore.isActive) {
+        console.log('❌ No se puede cambiar modo mientras el cronómetro está corriendo. Pausa primero.')
+        return false
+      }
+      
+      // Cambiar el modo y ajustar el tiempo (solo si está pausado)
+      timerStore.isResting = !timerStore.isResting
+      
+      if (timerStore.isResting) {
+        timerStore.currentTime = 90 // 1.5 minutos para descanso
+        console.log('🔄 Cambiado a DESCANSO')
+      } else {
+        timerStore.currentTime = 180 // 3 minutos para entrenamiento
+        console.log('🔄 Cambiado a ENTRENAMIENTO')
+      }
+      
+      // Guardar el nuevo estado
+      saveTimerState()
+      
+      return false
     }
 
     // Funciones de dragging
@@ -206,6 +269,12 @@ export default {
       document.removeEventListener('mouseup', stopDrag)
       document.removeEventListener('touchmove', onDrag)
       document.removeEventListener('touchend', stopDrag)
+      
+      // Guardar posición en localStorage
+      localStorage.setItem('floatingTimerPosition', JSON.stringify({
+        x: floatingPosition.x,
+        y: floatingPosition.y
+      }))
     }
 
     // Controles del cronómetro flotante
@@ -223,6 +292,7 @@ export default {
         timerStore.intervalId = null
         timerStore.isActive = false
         console.log('⏸️ Cronómetro PAUSADO')
+        saveTimerState()
       } else {
         // PLAY: Iniciar o reanudar cronómetro
         if (timerStore.currentTime === 0) {
@@ -234,9 +304,12 @@ export default {
         }
         
         timerStore.isActive = true
+        saveTimerState()
         timerStore.intervalId = setInterval(() => {
           if (timerStore.currentTime > 0) {
             timerStore.currentTime--
+            // Guardar estado cada segundo para mantener persistencia
+            saveTimerState()
           } else {
             // Timer terminado
             clearInterval(timerStore.intervalId)
@@ -257,15 +330,19 @@ export default {
               console.log('😴 Cambiando a DESCANSO')
             }
             
+            saveTimerState()
+            
             // Auto-iniciar el siguiente timer
             timerStore.isActive = true
             timerStore.intervalId = setInterval(() => {
               if (timerStore.currentTime > 0) {
                 timerStore.currentTime--
+                saveTimerState()
               } else {
                 clearInterval(timerStore.intervalId)
                 timerStore.intervalId = null
                 timerStore.isActive = false
+                saveTimerState()
                 console.log('⏰ Ciclo completado')
               }
             }, 1000)
@@ -285,13 +362,22 @@ export default {
         e.stopImmediatePropagation()
       }
       
-      // RESET: Limpiar completamente el cronómetro
+      // RESET INTELIGENTE: Resetear solo el tiempo del modo actual
       clearInterval(timerStore.intervalId)
       timerStore.intervalId = null
       timerStore.isActive = false
-      timerStore.currentTime = 0
-      timerStore.isResting = false
-      console.log('🔄 Cronómetro RESETEADO')
+      
+      // Resetear al tiempo correcto según el modo actual
+      if (timerStore.isResting) {
+        timerStore.currentTime = 90 // 1.5 minutos para descanso
+        console.log('🔄 DESCANSO RESETEADO a 1:30')
+      } else {
+        timerStore.currentTime = 180 // 3 minutos para entrenamiento
+        console.log('🔄 ENTRENAMIENTO RESETEADO a 3:00')
+      }
+      
+      // Guardar el estado reseteado
+      saveTimerState()
       
       // Retornar false para asegurar que no se propague
       return false
@@ -369,6 +455,33 @@ export default {
       return false
     }
 
+    const handleModeTouch = (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      e.stopImmediatePropagation()
+      
+      const touchDuration = Date.now() - touchStartTime.value
+      const touchEndPos = {
+        x: e.changedTouches[0].clientX,
+        y: e.changedTouches[0].clientY
+      }
+      
+      const moveDistance = Math.sqrt(
+        Math.pow(touchEndPos.x - touchStartPos.value.x, 2) + 
+        Math.pow(touchEndPos.y - touchStartPos.value.y, 2)
+      )
+      
+      // Solo ejecutar si fue un tap rápido y sin mucho movimiento
+      if (touchDuration < 300 && moveDistance < 10) {
+        console.log('🔄 Cambio de modo ejecutado')
+        toggleMode(e)
+      } else {
+        console.log('❌ Touch modo cancelado - duración:', touchDuration, 'distancia:', moveDistance)
+      }
+      
+      return false
+    }
+
     // Actualizar posición cuando cambie el tamaño de ventana
     const updatePosition = () => {
       const timerWidth = 120
@@ -381,12 +494,43 @@ export default {
       }
     }
 
+    // Sistema de themes
+    const currentTheme = ref('dark')
+
+    const loadTheme = () => {
+      const savedTheme = localStorage.getItem('theme') || 'dark'
+      applyTheme(savedTheme)
+    }
+
+    const applyTheme = (theme) => {
+      currentTheme.value = theme
+      const body = document.body
+      
+      if (theme === 'light') {
+        body.classList.add('light-mode')
+        body.classList.remove('dark-mode')
+        // Cambiar fondo principal pero mantener negro
+        body.style.background = '#0f0f0f'
+      } else {
+        body.classList.add('dark-mode')
+        body.classList.remove('light-mode')
+        body.style.background = '#1a1a1a'
+      }
+    }
+
+    const handleThemeChange = (event) => {
+      applyTheme(event.detail)
+    }
+
     onMounted(() => {
       window.addEventListener('resize', updatePosition)
+      window.addEventListener('themeChanged', handleThemeChange)
+      loadTheme()
     })
 
     onUnmounted(() => {
       window.removeEventListener('resize', updatePosition)
+      window.removeEventListener('themeChanged', handleThemeChange)
       stopDrag()
     })
 
@@ -398,14 +542,17 @@ export default {
       timerStore,
       floatingTimer,
       floatingPosition,
+      currentTheme,
       changeUser,
       formatTime,
       startDrag,
       toggleFloatingTimer,
       resetFloatingTimer,
+      toggleMode,
       handleTouchStart,
       handleToggleTouch,
       handleResetTouch,
+      handleModeTouch,
       touchStartPos
     }
   }

@@ -6,53 +6,137 @@
 @layer base {
   * {
     @apply border-gym-light-gray;
+    box-sizing: border-box;
   }
   
   body {
     @apply antialiased;
+    overflow-x: hidden;
+  }
+  
+  /* Prevenir overflow horizontal */
+  .container, main, .p-4, .space-y-6 {
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 }
 
 @layer components {
   .btn-gym {
-    @apply px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform active:scale-95;
+    @apply px-3 py-2 rounded-lg font-semibold transition-all duration-200 transform active:scale-95;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: center;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .btn-primary {
-    @apply btn-gym bg-gradient-to-r from-gym-cyan to-gym-green text-gym-dark hover:shadow-lg hover:shadow-gym-cyan/30;
+    @apply btn-gym bg-gradient-cyber text-white hover:shadow-xl hover:shadow-cyan-500/25 hover:scale-105;
   }
   
   .btn-secondary {
-    @apply btn-gym bg-gym-light-gray text-white hover:bg-gym-gray border border-gym-light-gray;
+    @apply btn-gym bg-gradient-to-r from-gym-slate to-gym-slate-light text-white hover:shadow-lg hover:shadow-slate-500/25;
   }
   
   .card-gym {
-    @apply bg-gym-card rounded-xl p-4 border border-gym-light-gray shadow-lg;
+    @apply bg-gym-card rounded-2xl p-6 border border-gym-light-gray/30 shadow-xl backdrop-blur-sm;
+  }
+  
+  /* Estilos para modo claro */
+  .light-mode {
+    background: #0f0f0f !important;
+  }
+  
+  .light-mode .card-gym {
+    @apply bg-gym-light-card border-gray-200 shadow-lg;
+    color: #1f2937 !important;
+  }
+  
+  .light-mode .input-gym {
+    @apply bg-white border-gray-300;
+    color: #1f2937 !important;
+  }
+  
+  .light-mode .input-gym::placeholder {
+    color: #6b7280 !important;
+  }
+  
+  .light-mode header {
+    @apply bg-gym-light-card border-gray-200;
+    color: #1f2937 !important;
+  }
+  
+  .light-mode nav {
+    @apply bg-gym-light-card/90 border-gray-200;
+  }
+  
+  /* Textos en modo claro */
+  .light-mode h1,
+  .light-mode h2,
+  .light-mode h3,
+  .light-mode h4,
+  .light-mode h5,
+  .light-mode p,
+  .light-mode span,
+  .light-mode label {
+    color: #1f2937 !important;
+  }
+  
+  .light-mode .text-gray-300 {
+    color: #6b7280 !important;
+  }
+  
+  .light-mode .text-gray-400 {
+    color: #9ca3af !important;
+  }
+  
+  .light-mode .text-gray-500 {
+    color: #6b7280 !important;
+  }
+  
+  /* Info badges mantienen sus colores originales en modo claro */
+  
+  /* Botones en modo claro con mejor contraste */
+  .light-mode .btn-primary {
+    @apply shadow-xl shadow-cyan-500/30;
+  }
+  
+  .light-mode .btn-secondary {
+    @apply bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-lg shadow-gray-500/25;
   }
   
   /* Nuevos estilos para botones de repeticiones y series */
   .info-badge {
-    @apply px-4 py-2 rounded-full font-bold text-sm inline-flex items-center justify-center min-w-[100px] whitespace-nowrap;
+    @apply w-full px-3 py-3 rounded-xl font-semibold text-sm inline-flex items-center justify-center shadow-lg transition-all duration-300;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.3;
+    text-align: center;
+    min-height: 2.5rem;
   }
   
   .info-badge-series {
-    @apply info-badge bg-gym-cyan text-gym-dark;
+    @apply info-badge text-white bg-gradient-to-r from-gym-cyan to-gym-cyan-light hover:from-gym-cyan-light hover:to-gym-cyan shadow-cyan-500/25;
   }
   
   .info-badge-reps {
-    @apply info-badge bg-gym-green text-gym-dark;
+    @apply info-badge text-white bg-gradient-to-r from-gym-emerald to-gym-emerald-light hover:from-gym-emerald-light hover:to-gym-emerald shadow-emerald-500/25;
   }
   
   .info-badge-peso {
-    @apply info-badge bg-gym-orange text-gym-dark;
+    @apply info-badge text-white bg-gradient-to-r from-gym-purple to-gym-purple-light hover:from-gym-purple-light hover:to-gym-purple shadow-purple-500/25;
   }
   
   .info-badge-duracion {
-    @apply info-badge bg-gym-yellow text-gym-dark;
+    @apply info-badge text-white bg-gradient-to-r from-gym-orange to-gym-orange-light hover:from-gym-orange-light hover:to-gym-orange shadow-orange-500/25;
   }
   
   .info-badge-velocidad {
-    @apply info-badge bg-gym-pink text-gym-dark;
+    @apply info-badge text-white bg-gradient-to-r from-gym-pink to-gym-pink-light hover:from-gym-pink-light hover:to-gym-pink shadow-pink-500/25;
   }
   
   .input-gym {

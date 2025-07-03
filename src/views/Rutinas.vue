@@ -1,15 +1,15 @@
 <template>
   <div class="p-4 space-y-6">
     <!-- Selector de días -->
-    <div class="grid grid-cols-3 gap-3">
+    <div class="grid grid-cols-3 gap-4">
       <button
         v-for="dia in rutinasUsuario.days || []"
         :key="'dia' + dia.dayNumber"
         @click="diaSeleccionado = 'dia' + dia.dayNumber"
-        class="p-3 rounded-lg font-semibold transition-all"
+        class="p-4 rounded-2xl font-bold transition-all duration-300 transform hover:scale-105"
         :class="diaSeleccionado === 'dia' + dia.dayNumber 
-          ? 'bg-gradient-to-r from-gym-cyan to-gym-green text-gym-dark' 
-          : 'bg-gym-light-gray text-white hover:bg-gym-gray'"
+          ? 'bg-gradient-modern text-white shadow-xl shadow-purple-500/30 border-2 border-transparent' 
+          : 'bg-gradient-to-r from-gym-gray to-gym-light-gray text-white hover:bg-gradient-to-r hover:from-gym-light-gray hover:to-gym-card shadow-lg border-2 border-gym-light-gray/30'"
       >
         {{ getNombreDia('dia' + dia.dayNumber) }}
       </button>
@@ -118,11 +118,11 @@
         
         <div v-else class="space-y-3">
           <p class="text-white font-medium">{{ rutinaActual.calentamiento.ejercicio }}</p>
-          <div class="flex flex-wrap justify-center gap-3">
-            <div v-if="rutinaActual.calentamiento.duracion" class="info-badge-duracion">
+          <div class="space-y-2">
+            <div v-if="rutinaActual.calentamiento.duracion" class="info-badge duracion-badge">
               ⏱️ Duración: {{ rutinaActual.calentamiento.duracion }}
             </div>
-            <div v-if="rutinaActual.calentamiento.descanso" class="info-badge-series">
+            <div v-if="rutinaActual.calentamiento.descanso" class="info-badge series-badge">
               ⏸️ Descanso: {{ rutinaActual.calentamiento.descanso }}
             </div>
           </div>
@@ -173,11 +173,11 @@
             <div class="space-y-3 ml-4 border-l-2 border-gym-yellow/30 pl-4">
               <div v-for="subEjercicio in ejercicio.exercises" :key="subEjercicio._id" class="bg-gym-gray/50 p-3 rounded-lg">
                 <h5 class="font-semibold text-white mb-3">{{ subEjercicio.name }}</h5>
-                <div class="flex justify-center space-x-3">
-                  <div class="info-badge-series">
+                <div class="space-y-2">
+                  <div class="info-badge series-badge">
                     🔄 Series: {{ subEjercicio.series }}
                   </div>
-                  <div class="info-badge-reps">
+                  <div class="info-badge reps-badge">
                     ⚡ Reps: {{ subEjercicio.repetitions }}
                   </div>
                 </div>
@@ -201,7 +201,7 @@
             </div>
 
             <!-- Pesos - Diseño mejorado -->
-            <div class="flex items-center justify-center space-x-4 my-4">
+            <div class="space-y-2 my-4">
               <!-- Peso principal -->
               <div v-if="editingId === ejercicio._id" class="text-center space-y-2">
                 <span class="text-gym-orange font-semibold text-sm">Peso:</span>
@@ -216,7 +216,7 @@
                   <span class="text-gray-300 text-sm">kg</span>
                 </div>
               </div>
-              <div v-else class="info-badge-peso">
+              <div v-else class="info-badge peso-badge">
                 🏋️ Peso: {{ ejercicio.peso > 0 ? ejercicio.peso + ' kg' : 'Sin peso' }}
               </div>
               
@@ -236,14 +236,14 @@
                     <span class="text-gray-300 text-sm">kg</span>
                   </div>
                 </div>
-                <div v-else-if="ejercicio.pesoComplemento" class="info-badge-velocidad">
+                <div v-else-if="ejercicio.pesoComplemento" class="info-badge velocidad-badge">
                   ➕ Peso Comp: {{ ejercicio.pesoComplemento }} kg
                 </div>
               </div>
             </div>
 
             <!-- Series y Repeticiones - Diseño mejorado -->
-            <div class="flex items-center justify-center space-x-4 my-4">
+            <div class="space-y-2 my-4">
               <!-- Series -->
               <div v-if="editingId === ejercicio._id" class="text-center space-y-2">
                 <span class="text-gym-cyan font-semibold text-sm">Series:</span>
@@ -255,7 +255,7 @@
                   class="input-gym w-20 text-center"
                 />
               </div>
-              <div v-else class="info-badge-series">
+              <div v-else class="info-badge series-badge">
                 🔄 Series: {{ ejercicio.series }}
               </div>
               
@@ -269,15 +269,15 @@
                   placeholder="ej: 12, 12+10+8, al fallo"
                 />
               </div>
-              <div v-else class="info-badge-reps">
+              <div v-else class="info-badge reps-badge">
                 ⚡ Reps: {{ ejercicio.repetitions }}
               </div>
             </div>
 
             <!-- Duración y Velocidad - Diseño mejorado -->
-            <div v-if="ejercicio.duracion || ejercicio.velocidad || editingId === ejercicio._id" class="flex items-center justify-center space-x-4 my-4">
+            <div v-if="(ejercicio.duracion && !tieneRepeticionesConTiempo(ejercicio.repetitions)) || ejercicio.velocidad || editingId === ejercicio._id" class="space-y-2 my-4">
               <!-- Duración -->
-              <div v-if="ejercicio.duracion || editingId === ejercicio._id">
+              <div v-if="(ejercicio.duracion && !tieneRepeticionesConTiempo(ejercicio.repetitions)) || editingId === ejercicio._id">
                 <div v-if="editingId === ejercicio._id" class="text-center space-y-2">
                   <span class="text-gym-yellow font-semibold text-sm">Duración:</span>
                   <input
@@ -287,7 +287,7 @@
                     placeholder="ej: 30 seg, 1 min"
                   />
                 </div>
-                <div v-else-if="ejercicio.duracion" class="info-badge-duracion">
+                <div v-else-if="ejercicio.duracion && !tieneRepeticionesConTiempo(ejercicio.repetitions)" class="info-badge duracion-badge">
                   ⏱️ Duración: {{ ejercicio.duracion }}
                 </div>
               </div>
@@ -303,7 +303,7 @@
                     placeholder="ej: 8 km/h, moderada"
                   />
                 </div>
-                <div v-else-if="ejercicio.velocidad" class="info-badge-velocidad">
+                <div v-else-if="ejercicio.velocidad" class="info-badge velocidad-badge">
                   🚀 Velocidad: {{ ejercicio.velocidad }}
                 </div>
               </div>
@@ -382,14 +382,14 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { rutinasData } from '../data/rutinas.js'
 
 export default {
   name: 'Rutinas',
   setup() {
     const usuarioActual = ref(localStorage.getItem('selectedUser') || 'matias')
-    const diaSeleccionado = ref('dia1')
+    const diaSeleccionado = ref(localStorage.getItem('diaSeleccionado') || 'dia1')
     const editingId = ref(null)
     const editingCalentamiento = ref(false)
     const editingTitulo = ref(false)
@@ -552,10 +552,23 @@ export default {
       editingTitulo.value = false
     }
 
+    // Función para detectar si las repeticiones contienen tiempo
+    const tieneRepeticionesConTiempo = (repetitions) => {
+      if (!repetitions) return false
+      const repetitionsStr = repetitions.toString().toLowerCase()
+      const palabrasTiempo = ['minuto', 'min', 'segundo', 'seg', 'hora', 'hr', 'h', 'segundo', 'segundos', 'minutos', 'horas']
+      return palabrasTiempo.some(palabra => repetitionsStr.includes(palabra))
+    }
+
     const handleUserChange = (event) => {
       usuarioActual.value = event.detail
       cargarDatos()
     }
+
+    // Watcher para guardar el día seleccionado en localStorage
+    watch(diaSeleccionado, (nuevoDia) => {
+      localStorage.setItem('diaSeleccionado', nuevoDia)
+    })
 
     onMounted(() => {
       cargarDatos()
@@ -586,7 +599,8 @@ export default {
       cancelarEdicionCalentamiento,
       toggleEditingTitulo,
       guardarTitulo,
-      cancelarEdicionTitulo
+      cancelarEdicionTitulo,
+      tieneRepeticionesConTiempo
     }
   }
 }

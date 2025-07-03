@@ -428,37 +428,215 @@ export const rutinasData = {
     success: true,
     message: "Success",
     data: {
-      _id: "67b28a4005d6d0ea31d661ec",
-      student: "674e2f6caf9aaf4677f44925",
+      _id: "67b28a6405d6d0ea31d662c5",
+      student: "674e3027af9aaf4677f44961",
       isPreset: false,
       days: [
         {
           dayNumber: 1,
-          muscularGroups: ["FUNCIONAL", "FLEXIBILIDAD"],
+          muscularGroups: ["PIERNAS I"],
           items: [
             {
               type: "exercise",
-              name: "Yoga flow + Plancha",
-              series: 2,
-              repetitions: "5 minutos",
-              peso: 0,
-              duracion: "5 minutos",
-              _id: "68630491c6bd9d60d6d207e1",
+              name: "SENTADILLAS CON BARRA",
+              notes: "AUMENTAMOS PROGRESIVAMENTE EL PESO",
+              series: 5,
+              repetitions: "12-12-10-10-8",
+              _id: "686303ccc6bd9d60d6d206ed",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "SENTADILLAS GLOBET CERRADAS",
+              notes: "UTILIZAMOS BANDA CIRCULAR + MANCUERNA DE 20KG",
+              series: 4,
+              repetitions: "15",
+              _id: "686303ccc6bd9d60d6d206ee",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "ESTOCADAS ESTATICAS CON DEFICIT",
+              series: 4,
+              repetitions: "12/12",
+              _id: "686303ccc6bd9d60d6d206ef",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "SUBIDA AL CAJON",
+              series: 4,
+              repetitions: "10/10",
+              _id: "686303ccc6bd9d60d6d206f0",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "ABDUCCION +CAMINALATERAL CON BANDAS",
+              series: 4,
+              repetitions: "15+10",
+              _id: "686303ccc6bd9d60d6d206f1",
+              exercises: []
+            },
+            {
+              type: "group",
+              name: "ZONA MEDIA",
+              exercises: [
+                {
+                  name: "ELEVACION DE TRONCO",
+                  series: 3,
+                  repetitions: "15",
+                  _id: "686303ccc6bd9d60d6d206f3"
+                },
+                {
+                  name: "BISAGRAS",
+                  series: 3,
+                  repetitions: "10/10",
+                  _id: "686303ccc6bd9d60d6d206f4"
+                },
+                {
+                  name: "ESCALADORES",
+                  series: 3,
+                  repetitions: "30/30",
+                  _id: "686303ccc6bd9d60d6d206f5"
+                }
+              ],
+              _id: "686303ccc6bd9d60d6d206f2"
+            }
+          ],
+          titulo: "PIERNAS I",
+          _id: "686303ccc6bd9d60d6d206ec"
+        },
+        {
+          dayNumber: 2,
+          muscularGroups: ["TREN SUPERIOR"],
+          items: [
+            {
+              type: "exercise",
+              name: "PRESS PLANO",
+              series: 3,
+              repetitions: "12",
+              _id: "686303ccc6bd9d60d6d206f7",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "REMO CON MANCUERNAS",
+              series: 3,
+              repetitions: "12",
+              _id: "686303ccc6bd9d60d6d206f8",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "CURL DE BICEPS + PRESS ARNOLD",
+              series: 3,
+              repetitions: "12",
+              _id: "686303ccc6bd9d60d6d206f9",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "REMO CON TRX",
+              series: 3,
+              repetitions: "FALLO",
+              _id: "686303ccc6bd9d60d6d206fa",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "PRESS INCLINADO",
+              series: 3,
+              repetitions: "12",
+              _id: "686303ccc6bd9d60d6d206fb",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "BICEPS CON BARRA W",
+              series: 3,
+              repetitions: "12",
+              _id: "686303ccc6bd9d60d6d206fc",
               exercises: []
             }
           ],
-          titulo: "Funcional y Flexibilidad",
-          _id: "68630491c6bd9d60d6d207e0"
+          titulo: "TREN SUPERIOR",
+          _id: "686303ccc6bd9d60d6d206f6"
+        },
+        {
+          dayNumber: 3,
+          muscularGroups: ["PIERNAS II"],
+          items: [
+            {
+              type: "exercise",
+              name: "PESO MUERTO",
+              series: 4,
+              repetitions: "12-12-10-10",
+              _id: "686303ccc6bd9d60d6d206fe",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "BULGARAS",
+              series: 4,
+              repetitions: "10-10-8-8",
+              _id: "686303ccc6bd9d60d6d206ff",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "HIPTRUST + ABDUCCION",
+              series: 4,
+              repetitions: "12-12-10-10 +15",
+              _id: "686303ccc6bd9d60d6d20700",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "PATADA CON BANDA",
+              series: 4,
+              repetitions: "15",
+              _id: "686303ccc6bd9d60d6d20701",
+              exercises: []
+            },
+            {
+              type: "group",
+              name: "ZONA MEDIA",
+              exercises: [
+                {
+                  name: "ABS CORTITOS",
+                  series: 3,
+                  repetitions: "20",
+                  _id: "686303ccc6bd9d60d6d20703"
+                },
+                {
+                  name: "ABS BOLITA",
+                  series: 3,
+                  repetitions: "20",
+                  _id: "686303ccc6bd9d60d6d20704"
+                },
+                {
+                  name: "RODILLA AL PECHO",
+                  series: 3,
+                  repetitions: "20",
+                  _id: "686303ccc6bd9d60d6d20705"
+                }
+              ],
+              _id: "686303ccc6bd9d60d6d20702"
+            }
+          ],
+          titulo: "PIERNAS II",
+          _id: "686303ccc6bd9d60d6d206fd"
         }
       ],
-      frequency: "2 VECES POR SEMANA",
-      objective: "FLEXIBILIDAD",
-      mesocycle: "4 SEMANAS",
-      trainer: "sara",
-      nextUpdate: "2025-07-01T00:00:00.000Z",
-      updateDate: "2025-06-15T12:00:00.000Z",
-      createdAt: "2025-06-01T00:00:00.000Z",
-      updatedAt: "2025-06-15T12:00:00.000Z",
+      frequency: "4 VECES POR SEMANA",
+      objective: "HIPERTROFIA",
+      mesocycle: "8 SEMANAS",
+      trainer: "bruno",
+      nextUpdate: "2025-08-04T00:00:00.000Z",
+      updateDate: "2025-06-30T21:38:20.603Z",
+      createdAt: "2025-02-17T01:01:25.003Z",
+      updatedAt: "2025-06-30T21:38:20.604Z",
       __v: 0
     }
   },
@@ -466,38 +644,215 @@ export const rutinasData = {
     success: true,
     message: "Success",
     data: {
-      _id: "67b28a4005d6d0ea31d661ed",
-      student: "674e2f6caf9aaf4677f44926",
+      _id: "67e1d08f4c03b0788d4e34e5",
+      student: "67d8908f1e823b2e63a362e9",
       isPreset: false,
       days: [
         {
           dayNumber: 1,
-          muscularGroups: ["CARDIO", "RESISTENCIA"],
+          muscularGroups: ["PIERNAS I"],
           items: [
             {
               type: "exercise",
-              name: "Correr en cinta",
-              series: 1,
-              repetitions: "20 minutos",
-              peso: 0,
-              duracion: "20 minutos",
-              velocidad: "8 km/h",
-              _id: "68630491c6bd9d60d6d207f1",
+              name: "SENTADILLAS CON BARRA",
+              notes: "AUMENTAMOS PROGRESIVAMENTE EL PESO",
+              series: 5,
+              repetitions: "12-12-10-10-8",
+              _id: "685f14c51c200a351ef754d1",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "SENTADILLAS GLOBET CERRADAS",
+              notes: "UTILIZAMOS BANDA CIRCULAR + MANCUERNA DE 20KG",
+              series: 4,
+              repetitions: "15",
+              _id: "685f14c51c200a351ef754d2",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "ESTOCADAS ESTATICAS CON DEFICIT",
+              series: 4,
+              repetitions: "12/12",
+              _id: "685f14c51c200a351ef754d3",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "SUBIDA AL CAJON",
+              series: 4,
+              repetitions: "10/10",
+              _id: "685f14c51c200a351ef754d4",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "ABDUCCION +CAMINALATERAL CON BANDAS",
+              series: 4,
+              repetitions: "15+10",
+              _id: "685f14c51c200a351ef754d5",
+              exercises: []
+            },
+            {
+              type: "group",
+              name: "ZONA MEDIA",
+              exercises: [
+                {
+                  name: "ELEVACION DE TRONCO",
+                  series: 3,
+                  repetitions: "15",
+                  _id: "685f14c51c200a351ef754d7"
+                },
+                {
+                  name: "BISAGRAS",
+                  series: 3,
+                  repetitions: "10/10",
+                  _id: "685f14c51c200a351ef754d8"
+                },
+                {
+                  name: "ESCALADORES",
+                  series: 3,
+                  repetitions: "30/30",
+                  _id: "685f14c51c200a351ef754d9"
+                }
+              ],
+              _id: "685f14c51c200a351ef754d6"
+            }
+          ],
+          titulo: "PIERNAS I",
+          _id: "685f14c51c200a351ef754d0"
+        },
+        {
+          dayNumber: 2,
+          muscularGroups: ["TREN SUPERIOR"],
+          items: [
+            {
+              type: "exercise",
+              name: "PRESS PLANO",
+              series: 3,
+              repetitions: "12",
+              _id: "685f14c51c200a351ef754db",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "REMO CON MANCUERNAS",
+              series: 3,
+              repetitions: "12",
+              _id: "685f14c51c200a351ef754dc",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "CURL DE BICEPS + PRESS ARNOLD",
+              series: 3,
+              repetitions: "12",
+              _id: "685f14c51c200a351ef754dd",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "REMO CON TRX",
+              series: 3,
+              repetitions: "FALLO",
+              _id: "685f14c51c200a351ef754de",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "PRESS INCLINADO",
+              series: 3,
+              repetitions: "12",
+              _id: "685f14c51c200a351ef754df",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "BICEPS CON BARRA W",
+              series: 3,
+              repetitions: "12",
+              _id: "685f14c51c200a351ef754e0",
               exercises: []
             }
           ],
-          titulo: "Resistencia y Cardio",
-          _id: "68630491c6bd9d60d6d207f0"
+          titulo: "TREN SUPERIOR",
+          _id: "685f14c51c200a351ef754da"
+        },
+        {
+          dayNumber: 3,
+          muscularGroups: ["PIERNAS II"],
+          items: [
+            {
+              type: "exercise",
+              name: "PESO MUERTO",
+              series: 4,
+              repetitions: "12-12-10-10",
+              _id: "685f14c51c200a351ef754e2",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "BULGARAS",
+              series: 4,
+              repetitions: "10-10-8-8",
+              _id: "685f14c51c200a351ef754e3",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "HIPTRUST + ABDUCCION",
+              series: 4,
+              repetitions: "12-12-10-10 +15",
+              _id: "685f14c51c200a351ef754e4",
+              exercises: []
+            },
+            {
+              type: "exercise",
+              name: "PATADA CON BANDA",
+              series: 4,
+              repetitions: "15",
+              _id: "685f14c51c200a351ef754e5",
+              exercises: []
+            },
+            {
+              type: "group",
+              name: "ZONA MEDIA",
+              exercises: [
+                {
+                  name: "ABS CORTITOS",
+                  series: 3,
+                  repetitions: "20",
+                  _id: "685f14c51c200a351ef754e7"
+                },
+                {
+                  name: "ABS BOLITA",
+                  series: 3,
+                  repetitions: "20",
+                  _id: "685f14c51c200a351ef754e8"
+                },
+                {
+                  name: "RODILLA AL PECHO",
+                  series: 3,
+                  repetitions: "20",
+                  _id: "685f14c51c200a351ef754e9"
+                }
+              ],
+              _id: "685f14c51c200a351ef754e6"
+            }
+          ],
+          titulo: "PIERNAS II",
+          _id: "685f14c51c200a351ef754e1"
         }
       ],
-      frequency: "5 VECES POR SEMANA",
-      objective: "RESISTENCIA",
-      mesocycle: "6 SEMANAS",
-      trainer: "carla",
-      nextUpdate: "2025-07-15T00:00:00.000Z",
-      updateDate: "2025-06-20T14:30:00.000Z",
-      createdAt: "2025-06-10T00:00:00.000Z",
-      updatedAt: "2025-06-20T14:30:00.000Z",
+      frequency: "3 VECES POR SEMANA",
+      objective: "HIPERTROFIA",
+      mesocycle: "8 SEMANAS",
+      trainer: "bruno",
+      nextUpdate: "2025-08-02T00:00:00.000Z",
+      updateDate: "2025-06-27T22:01:41.098Z",
+      createdAt: "2025-03-24T21:37:19.258Z",
+      updatedAt: "2025-06-27T22:01:41.098Z",
       __v: 0
     }
   }
