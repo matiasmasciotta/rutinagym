@@ -221,7 +221,7 @@ export default {
       return false
     }
 
-    // Funciones de dragging
+    // Funciones de dragging simples
     const startDrag = (e) => {
       // Solo iniciar drag si no es un botón
       if (e.target.closest('button')) {
@@ -253,8 +253,8 @@ export default {
       let newY = clientY - dragOffset.y
       
       // Limitar a los bordes de la ventana
-      const timerWidth = 120
-      const timerHeight = 120
+      const timerWidth = 140
+      const timerHeight = 140
       newX = Math.max(0, Math.min(window.innerWidth - timerWidth, newX))
       newY = Math.max(0, Math.min(window.innerHeight - timerHeight, newY))
       
@@ -264,6 +264,7 @@ export default {
 
     const stopDrag = () => {
       isDragging.value = false
+      
       document.removeEventListener('mousemove', onDrag)
       document.removeEventListener('mouseup', stopDrag)
       document.removeEventListener('touchmove', onDrag)

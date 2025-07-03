@@ -264,18 +264,13 @@
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
   }
   
-  /* Cronómetro flotante mejorado */
+  /* Cronómetro flotante simple */
   .floating-timer-enhanced {
-    @apply transition-all duration-200 ease-in-out;
     border: 2px solid transparent;
     background: linear-gradient(135deg, #1f2937, #374151) padding-box,
                 linear-gradient(135deg, #06b6d4, #10b981) border-box;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-  }
-  
-  .floating-timer-enhanced:active {
-    @apply scale-95;
   }
   
   .timer-display {
