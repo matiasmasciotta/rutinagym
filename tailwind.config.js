@@ -9,11 +9,11 @@ export default {
     extend: {
       colors: {
         // Fondos oscuros más suaves
-        'gym-dark': '#1a1a1a',
-        'gym-darker': '#0f0f0f',
-        'gym-gray': '#2a2a2a',
-        'gym-light-gray': '#3d3d3d',
-        'gym-card': '#2d2d2d',
+        'gym-dark': '#2a2a2a',
+        'gym-darker': '#1f1f1f',
+        'gym-gray': '#3a3a3a',
+        'gym-light-gray': '#4a4a4a',
+        'gym-card': '#3d3d3d',
         
         // Fondos claros para modo claro
         'gym-light-bg': '#f8fafc',
@@ -44,6 +44,8 @@ export default {
       },
       fontFamily: {
         'gym': ['Inter', 'system-ui', 'sans-serif'],
+        'impact': ['Impact', 'Arial Black', 'sans-serif'],
+        'crossfit': ['Oswald', 'Impact', 'Arial Black', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-modern': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',

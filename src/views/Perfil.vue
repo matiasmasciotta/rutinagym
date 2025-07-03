@@ -13,7 +13,7 @@
 
       <!-- Título -->
       <div class="space-y-2">
-        <h1 class="text-4xl font-bold text-neon">RutinaGym</h1>
+        <h1 class="text-4xl title-impact">RutinaGym</h1>
         <p class="text-xl text-gray-300">Tu compañero de entrenamiento</p>
       </div>
 

@@ -2,7 +2,7 @@
   <div class="p-4 space-y-6">
     <!-- Título -->
     <div class="text-center">
-      <h2 class="text-2xl font-bold text-neon">Cronómetros de Entrenamiento</h2>
+      <h2 class="text-3xl title-impact">Cronómetros de Entrenamiento</h2>
     </div>
 
     <!-- Cronómetro Principal -->
@@ -11,7 +11,7 @@
       
       <!-- Display del tiempo -->
       <div class="mb-6">
-        <div class="text-5xl font-bold mb-2" 
+        <div class="text-5xl font-impact font-black mb-2" 
              :class="preparingPhase ? 'text-gym-yellow' : (timerStore.isResting ? 'text-gym-orange' : 'text-gym-green')">
           {{ formatTime(timerStore.currentTime) }}
         </div>

@@ -64,9 +64,55 @@
     color: #6b7280 !important;
   }
   
+  /* Selector de usuario en modo claro */
+  .light-mode select.input-gym {
+    background: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    color: #1f2937 !important;
+  }
+  
+  .light-mode select.input-gym option {
+    background: #ffffff !important;
+    color: #1f2937 !important;
+  }
+  
+  /* Selector específico del header en modo claro */
+  .light-mode header select {
+    background: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    color: #1f2937 !important;
+  }
+  
   .light-mode header {
     @apply bg-gym-light-card border-gray-200;
     color: #1f2937 !important;
+  }
+  
+  /* Título del header en modo claro */
+  .light-mode header h1.title-impact {
+    color: #1f2937 !important;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  /* Título de la app con gradiente en modo claro */
+  .light-mode .app-title {
+    background: linear-gradient(135deg, #06b6d4, #10b981) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    text-shadow: none !important;
+  }
+  
+  /* Título de rutina en modo claro */
+  .light-mode .routine-title {
+    color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Título de rutina más específico en modo claro */
+  .light-mode h2.routine-title.title-impact {
+    color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
   }
   
   .light-mode nav {
@@ -110,7 +156,7 @@
   
   /* Nuevos estilos para botones de repeticiones y series */
   .info-badge {
-    @apply w-full px-3 py-3 rounded-xl font-semibold text-sm inline-flex items-center justify-center shadow-lg transition-all duration-300;
+    @apply w-full px-3 py-3 rounded-xl font-semibold text-sm inline-flex items-center justify-center shadow-lg transition-all duration-300 border border-opacity-20;
     word-wrap: break-word;
     overflow-wrap: break-word;
     hyphens: auto;
@@ -119,28 +165,47 @@
     min-height: 2.5rem;
   }
   
-  .info-badge-series {
-    @apply info-badge text-white bg-gradient-to-r from-gym-cyan to-gym-cyan-light hover:from-gym-cyan-light hover:to-gym-cyan shadow-cyan-500/25;
+  .series-badge {
+    @apply info-badge text-white bg-gradient-to-r from-gym-cyan to-gym-cyan-light hover:from-gym-cyan-light hover:to-gym-cyan shadow-cyan-500/25 border-gym-cyan;
   }
   
-  .info-badge-reps {
-    @apply info-badge text-white bg-gradient-to-r from-gym-emerald to-gym-emerald-light hover:from-gym-emerald-light hover:to-gym-emerald shadow-emerald-500/25;
+  .reps-badge {
+    @apply info-badge text-white bg-gradient-to-r from-gym-emerald to-gym-emerald-light hover:from-gym-emerald-light hover:to-gym-emerald shadow-emerald-500/25 border-gym-emerald;
   }
   
-  .info-badge-peso {
-    @apply info-badge text-white bg-gradient-to-r from-gym-purple to-gym-purple-light hover:from-gym-purple-light hover:to-gym-purple shadow-purple-500/25;
+  .peso-badge {
+    @apply info-badge text-white bg-gradient-to-r from-gym-purple to-gym-purple-light hover:from-gym-purple-light hover:to-gym-purple shadow-purple-500/25 border-gym-purple;
   }
   
-  .info-badge-duracion {
-    @apply info-badge text-white bg-gradient-to-r from-gym-orange to-gym-orange-light hover:from-gym-orange-light hover:to-gym-orange shadow-orange-500/25;
+  .duracion-badge {
+    @apply info-badge text-white bg-gradient-to-r from-gym-orange to-gym-orange-light hover:from-gym-orange-light hover:to-gym-orange shadow-orange-500/25 border-gym-orange;
   }
   
-  .info-badge-velocidad {
-    @apply info-badge text-white bg-gradient-to-r from-gym-pink to-gym-pink-light hover:from-gym-pink-light hover:to-gym-pink shadow-pink-500/25;
+  .velocidad-badge {
+    @apply info-badge text-white bg-gradient-to-r from-gym-pink to-gym-pink-light hover:from-gym-pink-light hover:to-gym-pink shadow-pink-500/25 border-gym-pink;
   }
   
   .input-gym {
     @apply bg-gym-light-gray border border-gym-light-gray rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gym-cyan focus:border-transparent;
+  }
+  
+  /* Inputs en modo claro */
+  .light-mode .input-gym {
+    @apply bg-white border-gray-300 text-gray-900 placeholder-gray-500;
+  }
+  
+  /* Inputs de número en modo claro */
+  .light-mode input[type="number"].input-gym {
+    @apply bg-white border-gray-300 text-gray-900 placeholder-gray-500;
+  }
+  
+  /* Inputs específicos de cronómetros en modo claro */
+  .light-mode .card-gym input[type="number"] {
+    @apply bg-white border-gray-300 text-gray-900 placeholder-gray-500;
+  }
+  
+  .light-mode .card-gym input[type="number"]:disabled {
+    @apply bg-gray-100 border-gray-200 text-gray-600;
   }
   
   .text-neon {
@@ -172,5 +237,120 @@
     -ms-user-select: none;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Tipografía Impact/Crossfit para títulos */
+  .title-impact {
+    @apply font-impact text-white font-black tracking-wide;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    letter-spacing: 1px;
+  }
+  
+  .light-mode .title-impact {
+    @apply text-gray-900;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  /* Título principal en modo claro - asegurar que se vea bien */
+  .light-mode h1.title-impact,
+  .light-mode h3.title-impact {
+    color: #1f2937 !important;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  /* Título h2 específico para rutinas en modo claro */
+  .light-mode h2.title-impact {
+    color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Cronómetro flotante mejorado */
+  .floating-timer-enhanced {
+    @apply transition-all duration-200 ease-in-out;
+    border: 2px solid transparent;
+    background: linear-gradient(135deg, #1f2937, #374151) padding-box,
+                linear-gradient(135deg, #06b6d4, #10b981) border-box;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  
+  .floating-timer-enhanced:active {
+    @apply scale-95;
+  }
+  
+  .timer-display {
+    @apply font-impact font-black tracking-wider;
+    font-size: 2.125rem;
+    line-height: 2.75rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
+  
+  .light-mode .floating-timer-enhanced {
+    background: linear-gradient(135deg, #ffffff, #f1f5f9) padding-box,
+                linear-gradient(135deg, #06b6d4, #10b981) border-box;
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15), 0 10px 10px -5px rgba(0,0,0,0.1), 0 0 20px rgba(6,182,212,0.2);
+  }
+  
+  .light-mode .timer-display {
+    color: #1f2937 !important;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+  }
+  
+  /* Textos del cronómetro flotante en modo claro */
+  .light-mode .floating-timer-enhanced div,
+  .light-mode .floating-timer-enhanced button {
+    color: #1f2937 !important;
+  }
+  
+  .light-mode .floating-timer-enhanced button:hover {
+    color: #0891b2 !important;
+  }
+  
+  /* Textos más grandes en general */
+  .text-base {
+    @apply text-lg;
+  }
+  
+  .text-sm {
+    @apply text-base;
+  }
+  
+  .text-lg {
+    @apply text-xl;
+  }
+  
+  /* Notas sin fondo */
+  .notes-text {
+    @apply text-gray-400 text-sm italic;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+  
+  .light-mode .notes-text {
+    @apply text-gray-600;
+  }
+  
+  /* Botones del configurador de tema en modo claro */
+  .light-mode .card-gym button {
+    color: #1f2937 !important;
+  }
+  
+  .light-mode .card-gym button.bg-gym-light-gray {
+    @apply bg-gray-200 text-gray-700 hover:bg-gray-300;
+  }
+  
+  .light-mode .card-gym .text-gray-300 {
+    color: #374151 !important;
+  }
+  
+  /* Textos de descripción en modo claro */
+  .light-mode p.text-gray-300 {
+    color: #374151 !important;
+  }
+  
+  /* Labels en modo claro */
+  .light-mode label.text-gray-300 {
+    color: #374151 !important;
   }
 } 

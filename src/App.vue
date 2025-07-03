@@ -3,7 +3,7 @@
     <!-- Header -->
     <header class="bg-gym-darker border-b border-gym-light-gray/30 p-4 backdrop-blur-sm">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold bg-gradient-cyber bg-clip-text text-transparent">
+        <h1 class="text-3xl title-impact bg-gradient-cyber bg-clip-text text-transparent app-title">
           RutinaGym
         </h1>
         <!-- Selector de usuario -->
@@ -31,8 +31,7 @@
     <div 
       v-if="timerStore.showFloating" 
       ref="floatingTimer"
-      class="fixed z-50 bg-gym-card rounded-2xl border border-transparent bg-gradient-to-r from-gym-light-gray/80 to-gym-card/80 backdrop-blur-md shadow-2xl cursor-move select-none min-w-[140px]"
-      style="background: linear-gradient(135deg, rgba(45,45,45,0.95) 0%, rgba(61,61,61,0.95) 100%); border: 1px solid rgba(6,182,212,0.3); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.4), 0 10px 10px -5px rgba(0,0,0,0.2), 0 0 20px rgba(6,182,212,0.1);"
+      class="fixed z-50 floating-timer-enhanced rounded-2xl shadow-2xl cursor-move select-none min-w-[140px]"
       :style="{ top: floatingPosition.y + 'px', left: floatingPosition.x + 'px' }"
       @mousedown="startDrag"
       @touchstart="startDrag"
@@ -53,7 +52,7 @@
         >
           {{ timerStore.isResting ? '😴 DESCANSO' : '💪 ENTRENA' }}
         </button>
-        <div class="text-2xl font-bold text-white mb-3">
+        <div class="timer-display text-white mb-3">
           {{ formatTime(timerStore.currentTime) }}
         </div>
         <!-- Controles -->

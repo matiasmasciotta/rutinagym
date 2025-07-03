@@ -41,7 +41,7 @@
           </div>
         </div>
         <div v-else class="flex items-center justify-center space-x-3">
-          <h2 class="text-2xl font-bold text-neon">
+          <h2 class="text-3xl title-impact routine-title">
             {{ rutinaActual.titulo }}
           </h2>
           <button
@@ -189,7 +189,7 @@
           <div v-if="ejercicio.type === 'exercise'" class="space-y-3">
             <!-- Nombre del ejercicio (editable) -->
             <div class="space-y-2">
-              <span class="text-gym-yellow font-semibold text-sm">Ejercicio:</span>
+              <span class="text-gray-400 font-semibold text-sm">Ejercicio:</span>
               <div v-if="editingId === ejercicio._id">
                 <textarea
                   v-model="ejercicio.name"
@@ -321,7 +321,7 @@
                 />
               </div>
               <div v-else-if="ejercicio.notes" class="mt-2">
-                <p class="text-gray-300 text-sm italic bg-gym-gray/50 p-3 rounded-lg border border-gym-light-gray/30">{{ ejercicio.notes }}</p>
+                <p class="notes-text">{{ ejercicio.notes }}</p>
               </div>
               <div v-else class="text-gray-500 text-sm">Sin notas</div>
             </div>
