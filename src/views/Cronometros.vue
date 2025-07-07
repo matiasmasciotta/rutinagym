@@ -227,9 +227,9 @@ export default {
     const preparingPhase = ref(false)
     const preparingTime = ref(5) // 5 segundos de preparación
     
-    // Configuración de tiempos (por defecto 1 minuto cada uno)
-    const workTime = ref(60) // segundos
-    const restTime = ref(60) // segundos
+    // Configuración de tiempos (cargar de localStorage o por defecto 1 minuto cada uno)
+    const workTime = ref(parseInt(localStorage.getItem('configuredWorkTime')) || 60) // segundos
+    const restTime = ref(parseInt(localStorage.getItem('configuredRestTime')) || 60) // segundos
     
     // Estadísticas
     const totalWorkTime = ref(parseInt(localStorage.getItem('totalWorkTime')) || 0)
@@ -312,6 +312,7 @@ export default {
 
     const saveWorkTime = () => {
       workTime.value = workMinutes.value * 60 + workSeconds.value
+      localStorage.setItem('configuredWorkTime', workTime.value.toString())
       workTimeEditing.value = false
       if (!timerStore.isResting && !timerStore.isActive && !preparingPhase.value) {
         timerStore.currentTime = workTime.value
@@ -324,6 +325,7 @@ export default {
 
     const saveRestTime = () => {
       restTime.value = restMinutes.value * 60 + restSeconds.value
+      localStorage.setItem('configuredRestTime', restTime.value.toString())
       restTimeEditing.value = false
       if (timerStore.isResting && !timerStore.isActive) {
         timerStore.currentTime = restTime.value
@@ -333,6 +335,10 @@ export default {
     const setPreset = (work, rest) => {
       workTime.value = work
       restTime.value = rest
+      
+      // Guardar en localStorage
+      localStorage.setItem('configuredWorkTime', work.toString())
+      localStorage.setItem('configuredRestTime', rest.toString())
       
       workMinutes.value = Math.floor(work / 60)
       workSeconds.value = work % 60
@@ -371,6 +377,12 @@ export default {
     }
 
     onMounted(() => {
+      // Inicializar campos de entrada con valores cargados
+      workMinutes.value = Math.floor(workTime.value / 60)
+      workSeconds.value = workTime.value % 60
+      restMinutes.value = Math.floor(restTime.value / 60)
+      restSeconds.value = restTime.value % 60
+      
       // Inicializar el cronómetro
       if (timerStore.currentTime === 0) {
         timerStore.currentTime = workTime.value

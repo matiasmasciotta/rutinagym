@@ -207,11 +207,15 @@ export default {
       // Cambiar el modo y ajustar el tiempo (solo si está pausado)
       timerStore.isResting = !timerStore.isResting
       
+      // Leer tiempos configurados del localStorage
+      const configuredWorkTime = parseInt(localStorage.getItem('configuredWorkTime')) || 180
+      const configuredRestTime = parseInt(localStorage.getItem('configuredRestTime')) || 90
+      
       if (timerStore.isResting) {
-        timerStore.currentTime = 90 // 1.5 minutos para descanso
+        timerStore.currentTime = configuredRestTime
         console.log('🔄 Cambiado a DESCANSO')
       } else {
-        timerStore.currentTime = 180 // 3 minutos para entrenamiento
+        timerStore.currentTime = configuredWorkTime
         console.log('🔄 Cambiado a ENTRENAMIENTO')
       }
       
@@ -296,8 +300,11 @@ export default {
       } else {
         // PLAY: Iniciar o reanudar cronómetro
         if (timerStore.currentTime === 0) {
-          // Inicializar con tiempo de entrenamiento por defecto
-          timerStore.currentTime = timerStore.isResting ? 90 : 180
+          // Leer tiempos configurados del localStorage
+          const configuredWorkTime = parseInt(localStorage.getItem('configuredWorkTime')) || 180
+          const configuredRestTime = parseInt(localStorage.getItem('configuredRestTime')) || 90
+          // Inicializar con tiempo configurado
+          timerStore.currentTime = timerStore.isResting ? configuredRestTime : configuredWorkTime
           console.log('🆕 Nuevo cronómetro iniciado:', timerStore.currentTime, 'segundos')
         } else {
           console.log('▶️ Cronómetro REANUDADO desde:', timerStore.currentTime, 'segundos')
@@ -318,15 +325,18 @@ export default {
             console.log('⏰ Timer terminado!')
             
             // Alternar entre entrenamiento y descanso
+            const configuredWorkTime = parseInt(localStorage.getItem('configuredWorkTime')) || 180
+            const configuredRestTime = parseInt(localStorage.getItem('configuredRestTime')) || 90
+            
             if (timerStore.isResting) {
               // Cambiar a modo entrenamiento
               timerStore.isResting = false
-              timerStore.currentTime = 180 // 3 minutos
+              timerStore.currentTime = configuredWorkTime
               console.log('💪 Cambiando a ENTRENAMIENTO')
             } else {
               // Cambiar a modo descanso
               timerStore.isResting = true
-              timerStore.currentTime = 90 // 1.5 minutos
+              timerStore.currentTime = configuredRestTime
               console.log('😴 Cambiando a DESCANSO')
             }
             
@@ -367,13 +377,17 @@ export default {
       timerStore.intervalId = null
       timerStore.isActive = false
       
+      // Leer tiempos configurados del localStorage
+      const configuredWorkTime = parseInt(localStorage.getItem('configuredWorkTime')) || 180
+      const configuredRestTime = parseInt(localStorage.getItem('configuredRestTime')) || 90
+      
       // Resetear al tiempo correcto según el modo actual
       if (timerStore.isResting) {
-        timerStore.currentTime = 90 // 1.5 minutos para descanso
-        console.log('🔄 DESCANSO RESETEADO a 1:30')
+        timerStore.currentTime = configuredRestTime
+        console.log(`🔄 DESCANSO RESETEADO a ${Math.floor(configuredRestTime/60)}:${(configuredRestTime%60).toString().padStart(2,'0')}`)
       } else {
-        timerStore.currentTime = 180 // 3 minutos para entrenamiento
-        console.log('🔄 ENTRENAMIENTO RESETEADO a 3:00')
+        timerStore.currentTime = configuredWorkTime
+        console.log(`🔄 ENTRENAMIENTO RESETEADO a ${Math.floor(configuredWorkTime/60)}:${(configuredWorkTime%60).toString().padStart(2,'0')}`)
       }
       
       // Guardar el estado reseteado
