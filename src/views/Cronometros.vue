@@ -66,27 +66,29 @@
           Tiempo de Entrenamiento
         </h4>
         <div class="space-y-3">
-          <div class="flex items-center space-x-2">
-            <label class="text-sm text-gray-300">Minutos:</label>
-            <input
-              v-model.number="workMinutes"
-              type="number"
-              min="0"
-              max="60"
-              class="input-gym w-20 text-center"
-              :disabled="!workTimeEditing"
-            />
-          </div>
-          <div class="flex items-center space-x-2">
-            <label class="text-sm text-gray-300">Segundos:</label>
-            <input
-              v-model.number="workSeconds"
-              type="number"
-              min="0"
-              max="59"
-              class="input-gym w-20 text-center"
-              :disabled="!workTimeEditing"
-            />
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2">
+              <label class="text-sm text-gray-300">Min:</label>
+              <input
+                v-model.number="workMinutes"
+                type="number"
+                min="0"
+                max="60"
+                class="input-gym w-16 text-center"
+                :disabled="!workTimeEditing"
+              />
+            </div>
+            <div class="flex items-center space-x-2">
+              <label class="text-sm text-gray-300">Seg:</label>
+              <input
+                v-model.number="workSeconds"
+                type="number"
+                min="0"
+                max="59"
+                class="input-gym w-16 text-center"
+                :disabled="!workTimeEditing"
+              />
+            </div>
           </div>
           <button
             @click="saveWorkTime"
@@ -114,27 +116,29 @@
           Tiempo de Descanso
         </h4>
         <div class="space-y-3">
-          <div class="flex items-center space-x-2">
-            <label class="text-sm text-gray-300">Minutos:</label>
-            <input
-              v-model.number="restMinutes"
-              type="number"
-              min="0"
-              max="60"
-              class="input-gym w-20 text-center"
-              :disabled="!restTimeEditing"
-            />
-          </div>
-          <div class="flex items-center space-x-2">
-            <label class="text-sm text-gray-300">Segundos:</label>
-            <input
-              v-model.number="restSeconds"
-              type="number"
-              min="0"
-              max="59"
-              class="input-gym w-20 text-center"
-              :disabled="!restTimeEditing"
-            />
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2">
+              <label class="text-sm text-gray-300">Min:</label>
+              <input
+                v-model.number="restMinutes"
+                type="number"
+                min="0"
+                max="60"
+                class="input-gym w-16 text-center"
+                :disabled="!restTimeEditing"
+              />
+            </div>
+            <div class="flex items-center space-x-2">
+              <label class="text-sm text-gray-300">Seg:</label>
+              <input
+                v-model.number="restSeconds"
+                type="number"
+                min="0"
+                max="59"
+                class="input-gym w-16 text-center"
+                :disabled="!restTimeEditing"
+              />
+            </div>
           </div>
           <button
             @click="saveRestTime"

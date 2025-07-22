@@ -53,6 +53,22 @@
             </svg>
           </button>
         </div>
+        
+        <!-- Información de fecha y modificaciones -->
+        <div v-if="infoRutina" class="text-center mt-2 space-y-1">
+          <div class="flex items-center justify-center space-x-2">
+            <svg class="w-4 h-4 text-gym-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4M3 7h18v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"></path>
+            </svg>
+            <span class="text-gray-300 text-sm">{{ infoRutina.fecha }}</span>
+          </div>
+          <div v-if="infoRutina.modificadaPorUsuario" class="flex items-center justify-center space-x-1">
+            <svg class="w-3 h-3 text-gym-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            <span class="text-yellow-400 text-xs">Modificada por usuario</span>
+          </div>
+        </div>
       </div>
 
       <!-- Calentamiento -->
@@ -320,10 +336,26 @@
                   placeholder="Descripción, técnica, consejos..."
                 />
               </div>
-              <div v-else-if="ejercicio.notes" class="mt-2">
-                <p class="notes-text">{{ ejercicio.notes }}</p>
+              <div v-else class="space-y-2">
+                <!-- Notas principales -->
+                <div v-if="ejercicio.notes" class="mt-2">
+                  <p class="notes-text text-gray-300">{{ ejercicio.notes }}</p>
+                </div>
+                
+                <!-- Notas adicionales del usuario (si existen y son diferentes) -->
+                <div v-if="ejercicio.notasUsuario && ejercicio.notasUsuario !== ejercicio.notes" class="mt-2">
+                  <div class="flex items-center space-x-2 mb-1">
+                    <svg class="w-3 h-3 text-gym-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                    <span class="text-yellow-400 text-xs">Mis notas:</span>
+                  </div>
+                  <p class="notes-text bg-gym-yellow/10 border border-gym-yellow/20 rounded p-2 text-yellow-100">{{ ejercicio.notasUsuario }}</p>
+                </div>
+                
+                <!-- Mensaje cuando no hay notas -->
+                <div v-if="!ejercicio.notes && !ejercicio.notasUsuario" class="text-gray-500 text-sm">Sin notas</div>
               </div>
-              <div v-else class="text-gray-500 text-sm">Sin notas</div>
             </div>
           </div>
 
@@ -416,6 +448,45 @@ export default {
       return rutinasUsuario.value.days?.find(day => day.dayNumber === dayNumber) || null
     })
 
+    const infoRutina = computed(() => {
+      if (!rutinasUsuario.value) return null
+
+      try {
+        // Obtener fecha de actualización
+        let fechaActualizacion = null
+        
+        if (rutinasUsuario.value.updateDate) {
+          fechaActualizacion = new Date(rutinasUsuario.value.updateDate)
+        } else if (rutinasUsuario.value.updatedAt) {
+          fechaActualizacion = new Date(rutinasUsuario.value.updatedAt)
+        }
+
+        let fechaFormateada = 'Sin fecha'
+        if (fechaActualizacion && !isNaN(fechaActualizacion)) {
+          const opciones = {
+            year: 'numeric',
+            month: 'long', 
+            day: 'numeric'
+          }
+          fechaFormateada = fechaActualizacion.toLocaleDateString('es-AR', opciones)
+        }
+
+        // Detectar si fue modificada por el usuario
+        // Si existe un flag de modificación local o si no coincide con datos originales
+        const modificacionLocalKey = `rutinas_modificada_${usuarioActual.value}`
+        const fueModificadaLocalmente = localStorage.getItem(modificacionLocalKey) === 'true'
+
+        return {
+          fecha: fechaFormateada,
+          modificadaPorUsuario: fueModificadaLocalmente
+        }
+
+      } catch (error) {
+        console.error('Error al obtener info de rutina:', error)
+        return null
+      }
+    })
+
     const getNombreDia = (dia) => {
       const nombres = {
         dia1: 'Día 1',
@@ -431,7 +502,13 @@ export default {
 
     const guardarCambios = () => {
       localStorage.setItem(`rutinas_${usuarioActual.value}`, JSON.stringify(datosLocales.value))
+      
+      // Marcar que fue modificada localmente por el usuario
+      const modificacionLocalKey = `rutinas_modificada_${usuarioActual.value}`
+      localStorage.setItem(modificacionLocalKey, 'true')
+      
       editingId.value = null
+      console.log(`💾 Rutina modificada localmente por el usuario: ${usuarioActual.value}`)
     }
 
     const cancelarEdicion = () => {
@@ -460,7 +537,13 @@ export default {
       
       rutinaActual.value.items.push(nuevoEjercicio)
       editingId.value = nuevoId
-      guardarCambios()
+      localStorage.setItem(`rutinas_${usuarioActual.value}`, JSON.stringify(datosLocales.value))
+      
+      // Marcar que fue modificada localmente por el usuario
+      const modificacionLocalKey = `rutinas_modificada_${usuarioActual.value}`
+      localStorage.setItem(modificacionLocalKey, 'true')
+      
+      console.log(`➕ Ejercicio agregado localmente por el usuario: ${usuarioActual.value}`)
     }
 
     const duplicarEjercicio = (ejercicio) => {
@@ -473,7 +556,13 @@ export default {
       
       rutinaActual.value.items.push(ejercicioDuplicado)
       editingId.value = nuevoId
-      guardarCambios()
+      localStorage.setItem(`rutinas_${usuarioActual.value}`, JSON.stringify(datosLocales.value))
+      
+      // Marcar que fue modificada localmente por el usuario
+      const modificacionLocalKey = `rutinas_modificada_${usuarioActual.value}`
+      localStorage.setItem(modificacionLocalKey, 'true')
+      
+      console.log(`📋 Ejercicio duplicado localmente por el usuario: ${usuarioActual.value}`)
     }
 
     const eliminarEjercicio = (id) => {
@@ -482,7 +571,13 @@ export default {
         if (index > -1) {
           rutinaActual.value.items.splice(index, 1)
           editingId.value = null
-          guardarCambios()
+          localStorage.setItem(`rutinas_${usuarioActual.value}`, JSON.stringify(datosLocales.value))
+          
+          // Marcar que fue modificada localmente por el usuario
+          const modificacionLocalKey = `rutinas_modificada_${usuarioActual.value}`
+          localStorage.setItem(modificacionLocalKey, 'true')
+          
+          console.log(`🗑️ Ejercicio eliminado localmente por el usuario: ${usuarioActual.value}`)
         }
       }
     }
@@ -508,7 +603,13 @@ export default {
           _id: Date.now().toString()
         }
         datosLocales.value.days.push(nuevoDia)
-        guardarCambios()
+        localStorage.setItem(`rutinas_${usuarioActual.value}`, JSON.stringify(datosLocales.value))
+        
+        // Marcar que fue modificada localmente por el usuario
+        const modificacionLocalKey = `rutinas_modificada_${usuarioActual.value}`
+        localStorage.setItem(modificacionLocalKey, 'true')
+        
+        console.log(`📅 Nueva rutina de día creada localmente por el usuario: ${usuarioActual.value}`)
       }
     }
 
@@ -523,7 +624,13 @@ export default {
 
     const guardarCalentamiento = () => {
       editingCalentamiento.value = false
-      guardarCambios()
+      localStorage.setItem(`rutinas_${usuarioActual.value}`, JSON.stringify(datosLocales.value))
+      
+      // Marcar que fue modificada localmente por el usuario
+      const modificacionLocalKey = `rutinas_modificada_${usuarioActual.value}`
+      localStorage.setItem(modificacionLocalKey, 'true')
+      
+      console.log(`💾 Calentamiento modificado localmente por el usuario: ${usuarioActual.value}`)
     }
 
     const cancelarEdicionCalentamiento = () => {
@@ -544,7 +651,13 @@ export default {
 
     const guardarTitulo = () => {
       editingTitulo.value = false
-      guardarCambios()
+      localStorage.setItem(`rutinas_${usuarioActual.value}`, JSON.stringify(datosLocales.value))
+      
+      // Marcar que fue modificada localmente por el usuario
+      const modificacionLocalKey = `rutinas_modificada_${usuarioActual.value}`
+      localStorage.setItem(modificacionLocalKey, 'true')
+      
+      console.log(`💾 Título modificado localmente por el usuario: ${usuarioActual.value}`)
     }
 
     const cancelarEdicionTitulo = () => {
@@ -565,6 +678,18 @@ export default {
       cargarDatos()
     }
 
+    const handleRutinasActualizadas = (event) => {
+      if (event.detail.usuario === usuarioActual.value) {
+        console.log(`🔄 Recargando rutinas para ${usuarioActual.value}`)
+        cargarDatos()
+        
+        // Limpiar flag de modificación local ya que se actualizó desde la API
+        const modificacionLocalKey = `rutinas_modificada_${usuarioActual.value}`
+        localStorage.removeItem(modificacionLocalKey)
+        console.log(`🆕 Flag de modificación local limpiado para ${usuarioActual.value}`)
+      }
+    }
+
     // Watcher para guardar el día seleccionado en localStorage
     watch(diaSeleccionado, (nuevoDia) => {
       localStorage.setItem('diaSeleccionado', nuevoDia)
@@ -573,10 +698,12 @@ export default {
     onMounted(() => {
       cargarDatos()
       window.addEventListener('userChanged', handleUserChange)
+      window.addEventListener('rutinasActualizadas', handleRutinasActualizadas)
     })
 
     onUnmounted(() => {
       window.removeEventListener('userChanged', handleUserChange)
+      window.removeEventListener('rutinasActualizadas', handleRutinasActualizadas)
     })
 
     return {
@@ -600,7 +727,8 @@ export default {
       toggleEditingTitulo,
       guardarTitulo,
       cancelarEdicionTitulo,
-      tieneRepeticionesConTiempo
+      tieneRepeticionesConTiempo,
+      infoRutina
     }
   }
 }
